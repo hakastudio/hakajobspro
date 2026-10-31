@@ -368,19 +368,54 @@ function hakajobspro_seed_default_terms() {
 add_action( 'init', 'hakajobspro_seed_default_terms', 15 );
 
 /* Gunakan template archive-loker.php untuk halaman arsip taksonomi Kategori, Pendidikan, Lokasi, & Tipe,
-   serta aktifkan rute langsung /perusahaan/ untuk Direktori Daftar Perusahaan */
-function hakajobspro_is_perusahaan_directory_request() {
-    $req_uri  = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
-    $req_path = trim( (string) wp_parse_url( $req_uri, PHP_URL_PATH ), '/' );
+   serta aktifkan rute langsung /perusahaan/, /daerah/ (/lokasi/), dan /pendidikan/ untuk Halaman Direktori */
+function hakajobspro_get_directory_route() {
+    $req_uri   = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+    $req_path  = trim( (string) wp_parse_url( $req_uri, PHP_URL_PATH ), '/' );
     $home_path = trim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
     if ( $home_path && strpos( $req_path, $home_path ) === 0 ) {
         $req_path = trim( substr( $req_path, strlen( $home_path ) ), '/' );
     }
-    return $req_path === 'perusahaan';
+
+    if ( $req_path === 'perusahaan' ) {
+        return 'perusahaan';
+    }
+    if ( in_array( $req_path, [ 'daerah', 'lokasi', 'lokasi-loker' ], true ) ) {
+        return 'daerah';
+    }
+    if ( in_array( $req_path, [ 'pendidikan', 'pendidikan-loker' ], true ) ) {
+        return 'pendidikan';
+    }
+
+    // Dukung juga sub-path langsung /daerah/{slug}, /lokasi-loker/{slug}, /pendidikan/{slug}, /pendidikan-loker/{slug}, /kategori-loker/{slug}, /tipe-loker/{slug}
+    // agar tidak pernah 404 meskipun permalink belum di-flush
+    if ( preg_match( '#^(daerah|lokasi|lokasi-loker)/([^/]+)$#i', $req_path, $m ) ) {
+        $_GET['loker_lokasi'] = sanitize_key( $m[2] );
+        return 'archive_loker_filtered';
+    }
+    if ( preg_match( '#^(pendidikan|pendidikan-loker)/([^/]+)$#i', $req_path, $m ) ) {
+        $_GET['loker_pendidikan'] = sanitize_key( $m[2] );
+        return 'archive_loker_filtered';
+    }
+    if ( preg_match( '#^(kategori|kategori-loker)/([^/]+)$#i', $req_path, $m ) ) {
+        $_GET['loker_kategori'] = sanitize_key( $m[2] );
+        return 'archive_loker_filtered';
+    }
+    if ( preg_match( '#^(tipe|tipe-loker)/([^/]+)$#i', $req_path, $m ) ) {
+        $_GET['loker_tipe'] = sanitize_key( $m[2] );
+        return 'archive_loker_filtered';
+    }
+
+    return '';
+}
+
+function hakajobspro_is_perusahaan_directory_request() {
+    return hakajobspro_get_directory_route() === 'perusahaan';
 }
 
 function hakajobspro_prevent_perusahaan_dir_404( $preempt, $wp_query ) {
-    if ( hakajobspro_is_perusahaan_directory_request() ) {
+    $route = hakajobspro_get_directory_route();
+    if ( $route ) {
         $wp_query->is_404     = false;
         $wp_query->is_archive = true;
         $wp_query->is_home    = false;
@@ -392,24 +427,40 @@ function hakajobspro_prevent_perusahaan_dir_404( $preempt, $wp_query ) {
 add_filter( 'pre_handle_404', 'hakajobspro_prevent_perusahaan_dir_404', 10, 2 );
 
 function hakajobspro_perusahaan_dir_title( $title ) {
-    if ( hakajobspro_is_perusahaan_directory_request() ) {
+    $route = hakajobspro_get_directory_route();
+    if ( 'perusahaan' === $route ) {
         $title['title'] = __( 'Daftar Perusahaan', 'hakajobspro' );
+    } elseif ( 'daerah' === $route ) {
+        $title['title'] = __( 'Lowongan Kerja Berdasarkan Daerah / Lokasi', 'hakajobspro' );
+    } elseif ( 'pendidikan' === $route ) {
+        $title['title'] = __( 'Lowongan Kerja Berdasarkan Pendidikan', 'hakajobspro' );
     }
     return $title;
 }
 add_filter( 'document_title_parts', 'hakajobspro_perusahaan_dir_title' );
 
 function hakajobspro_taxonomy_template_include( $template ) {
-    if ( hakajobspro_is_perusahaan_directory_request() ) {
+    $route = hakajobspro_get_directory_route();
+    if ( $route ) {
         global $wp_query;
         if ( $wp_query ) {
             $wp_query->is_404  = false;
             $wp_query->is_home = false;
         }
         status_header( 200 );
-        $dir_tpl = locate_template( 'page-perusahaan.php' );
-        if ( $dir_tpl ) {
-            return $dir_tpl;
+
+        if ( 'perusahaan' === $route ) {
+            $tpl = locate_template( 'page-perusahaan.php' );
+            if ( $tpl ) return $tpl;
+        } elseif ( 'daerah' === $route ) {
+            $tpl = locate_template( 'page-daerah.php' );
+            if ( $tpl ) return $tpl;
+        } elseif ( 'pendidikan' === $route ) {
+            $tpl = locate_template( 'page-pendidikan.php' );
+            if ( $tpl ) return $tpl;
+        } elseif ( 'archive_loker_filtered' === $route ) {
+            $tpl = locate_template( 'archive-loker.php' );
+            if ( $tpl ) return $tpl;
         }
     }
     if ( is_tax( [ 'loker_kategori', 'loker_pendidikan', 'loker_lokasi', 'loker_tipe' ] ) ) {

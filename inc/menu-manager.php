@@ -14,14 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Nilai default teks menu (Format: Nama Menu | URL per baris)
  */
 function hakajobspro_get_default_header_menu_text() {
-    $home  = home_url( '/' );
-    $loker = get_post_type_archive_link( 'loker' ) ?: home_url( '/lowongan/' );
+    $home       = home_url( '/' );
+    $perusahaan = home_url( '/perusahaan/' );
+    $daerah     = home_url( '/daerah/' );
+    $pendidikan = home_url( '/pendidikan/' );
     return implode( "\n", [
         'HOME | ' . $home,
-        'LOWONGAN KERJA | ' . $loker,
-        'DAERAH / LOKASI | ' . $loker,
-        'D3 / S1 | ' . add_query_arg( 'loker_pendidikan', 'd3-s1', $loker ),
-        'SMA / SMK | ' . add_query_arg( 'loker_pendidikan', 'sma-smk', $loker ),
+        'PERUSAHAAN | ' . $perusahaan,
+        'DAERAH / LOKASI | ' . $daerah,
+        'PENDIDIKAN | ' . $pendidikan,
     ] );
 }
 
@@ -86,6 +87,19 @@ function hakajobspro_parse_menu_lines( $raw_text ) {
             $url   = '#';
         }
         if ( '' !== $label ) {
+            // Upgrade otomatis jika label menu adalah DAERAH/LOKASI atau PENDIDIKAN yang masih mengarah ke placeholder /lowongan/
+            $norm_label = strtoupper( trim( $label ) );
+            $norm_path  = trim( (string) wp_parse_url( $url, PHP_URL_PATH ), '/' );
+            if ( in_array( $norm_path, [ 'lowongan', '' ], true ) && strpos( $url, '?' ) === false ) {
+                if ( in_array( $norm_label, [ 'DAERAH', 'LOKASI', 'DAERAH / LOKASI', 'DAERAH/LOKASI' ], true ) ) {
+                    $url = home_url( '/daerah/' );
+                } elseif ( in_array( $norm_label, [ 'PENDIDIKAN', 'JENJANG PENDIDIKAN' ], true ) ) {
+                    $url = home_url( '/pendidikan/' );
+                } elseif ( 'PERUSAHAAN' === $norm_label ) {
+                    $url = home_url( '/perusahaan/' );
+                }
+            }
+
             $items[] = [
                 'label' => $label,
                 'url'   => $url ?: '#',
@@ -353,7 +367,12 @@ function hakajobspro_render_menus_admin_page() {
                 </p>
                 <p class="description" style="margin-bottom:8px;">
                     Tulis 1 item menu per baris dengan format: <code>Nama Menu | URL Tujuan</code>.
-                    (Jika centang di atas dimatikan, tema akan memprioritaskan menu dari <a href="<?php echo esc_url( admin_url( 'nav-menus.php' ) ); ?>">Appearance &rarr; Menus</a>).
+                    (Jika centang di atas dimatikan, tema akan memprioritaskan menu dari <a href="<?php echo esc_url( admin_url( 'nav-menus.php' ) ); ?>">Appearance &rarr; Menus</a>).<br>
+                    <strong>Daftar URL Halaman Direktori Otomatis:</strong>
+                    <code><?php echo esc_html( home_url( '/perusahaan/' ) ); ?></code> (Daftar Perusahaan) &bull;
+                    <code><?php echo esc_html( home_url( '/daerah/' ) ); ?></code> (Daftar Daerah/Lokasi) &bull;
+                    <code><?php echo esc_html( home_url( '/pendidikan/' ) ); ?></code> (Daftar Pendidikan) &bull;
+                    <code><?php echo esc_html( home_url( '/lowongan/' ) ); ?></code> (Semua Lowongan)
                 </p>
                 <textarea name="hakajobspro_header_menu_items" rows="6" class="hjp-menu-textarea"><?php echo esc_textarea( $header_items ); ?></textarea>
             </div>

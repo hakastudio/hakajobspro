@@ -304,8 +304,12 @@ function hakajobspro_breadcrumb() {
             echo '<li><a href="' . esc_url( $co_url ) . '">' . esc_html( $co_name ) . '</a></li>';
         }
         echo '<li aria-current="page">' . esc_html( get_the_title() ) . '</li>';
-    } elseif ( function_exists( 'hakajobspro_is_perusahaan_directory_request' ) && hakajobspro_is_perusahaan_directory_request() ) {
+    } elseif ( function_exists( 'hakajobspro_get_directory_route' ) && hakajobspro_get_directory_route() === 'perusahaan' ) {
         echo '<li aria-current="page">' . esc_html__( 'Daftar Perusahaan', 'hakajobspro' ) . '</li>';
+    } elseif ( function_exists( 'hakajobspro_get_directory_route' ) && hakajobspro_get_directory_route() === 'daerah' ) {
+        echo '<li aria-current="page">' . esc_html__( 'Daerah / Lokasi', 'hakajobspro' ) . '</li>';
+    } elseif ( function_exists( 'hakajobspro_get_directory_route' ) && hakajobspro_get_directory_route() === 'pendidikan' ) {
+        echo '<li aria-current="page">' . esc_html__( 'Pendidikan', 'hakajobspro' ) . '</li>';
     } elseif ( is_tax( 'loker_perusahaan' ) ) {
         echo '<li><a href="' . esc_url( home_url( '/perusahaan/' ) ) . '">' . esc_html__( 'Perusahaan', 'hakajobspro' ) . '</a></li>';
         echo '<li aria-current="page">' . esc_html( single_term_title( '', false ) ) . '</li>';
