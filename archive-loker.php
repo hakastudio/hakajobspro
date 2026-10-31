@@ -67,48 +67,48 @@ $loker_query = new WP_Query( [
 
       <?php
       // Filter Kategori
-      $kat_terms = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => true ] );
-      if ( $kat_terms && ! is_wp_error( $kat_terms ) ) :
+      $kat_terms = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => false ] );
       ?>
       <select name="loker_kategori" aria-label="<?php esc_attr_e( 'Pilih Kategori', 'hakajobspro' ); ?>">
         <option value=""><?php esc_html_e( 'Semua Kategori', 'hakajobspro' ); ?></option>
-        <?php foreach ( $kat_terms as $t ) : ?>
-          <option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $sel_kategori, $t->slug ); ?>>
-            <?php echo esc_html( $t->name ); ?>
-          </option>
-        <?php endforeach; ?>
+        <?php if ( $kat_terms && ! is_wp_error( $kat_terms ) ) : ?>
+          <?php foreach ( $kat_terms as $t ) : ?>
+            <option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $sel_kategori, $t->slug ); ?>>
+              <?php echo esc_html( $t->name ); ?>
+            </option>
+          <?php endforeach; ?>
+        <?php endif; ?>
       </select>
-      <?php endif; ?>
 
       <?php
       // Filter Lokasi
-      $lok_terms = get_terms( [ 'taxonomy' => 'loker_lokasi', 'hide_empty' => true ] );
-      if ( $lok_terms && ! is_wp_error( $lok_terms ) ) :
+      $lok_terms = get_terms( [ 'taxonomy' => 'loker_lokasi', 'hide_empty' => false ] );
       ?>
       <select name="loker_lokasi" aria-label="<?php esc_attr_e( 'Pilih Kota', 'hakajobspro' ); ?>">
-        <option value=""><?php esc_html_e( 'Semua Kota', 'hakajobspro' ); ?></option>
-        <?php foreach ( $lok_terms as $t ) : ?>
-          <option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $sel_lokasi, $t->slug ); ?>>
-            <?php echo esc_html( $t->name ); ?>
-          </option>
-        <?php endforeach; ?>
+        <option value=""><?php esc_html_e( 'Semua Kota / Lokasi', 'hakajobspro' ); ?></option>
+        <?php if ( $lok_terms && ! is_wp_error( $lok_terms ) ) : ?>
+          <?php foreach ( $lok_terms as $t ) : ?>
+            <option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $sel_lokasi, $t->slug ); ?>>
+              <?php echo esc_html( $t->name ); ?>
+            </option>
+          <?php endforeach; ?>
+        <?php endif; ?>
       </select>
-      <?php endif; ?>
 
       <?php
       // Filter Tipe
-      $tipe_terms = get_terms( [ 'taxonomy' => 'loker_tipe', 'hide_empty' => true ] );
-      if ( $tipe_terms && ! is_wp_error( $tipe_terms ) ) :
+      $tipe_terms = get_terms( [ 'taxonomy' => 'loker_tipe', 'hide_empty' => false ] );
       ?>
       <select name="loker_tipe" aria-label="<?php esc_attr_e( 'Tipe Pekerjaan', 'hakajobspro' ); ?>">
         <option value=""><?php esc_html_e( 'Semua Tipe', 'hakajobspro' ); ?></option>
-        <?php foreach ( $tipe_terms as $t ) : ?>
-          <option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $sel_tipe, $t->slug ); ?>>
-            <?php echo esc_html( $t->name ); ?>
-          </option>
-        <?php endforeach; ?>
+        <?php if ( $tipe_terms && ! is_wp_error( $tipe_terms ) ) : ?>
+          <?php foreach ( $tipe_terms as $t ) : ?>
+            <option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $sel_tipe, $t->slug ); ?>>
+              <?php echo esc_html( $t->name ); ?>
+            </option>
+          <?php endforeach; ?>
+        <?php endif; ?>
       </select>
-      <?php endif; ?>
 
       <button type="submit" class="btn btn--primary btn--sm">
         <?php esc_html_e( 'Terapkan Filter', 'hakajobspro' ); ?>

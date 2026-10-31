@@ -27,18 +27,18 @@ get_header();
         <input type="hidden" name="post_type" value="loker">
 
         <?php
-        $lokasi_terms = get_terms( [ 'taxonomy' => 'loker_lokasi', 'hide_empty' => true ] );
-        if ( $lokasi_terms && ! is_wp_error( $lokasi_terms ) ) :
+        $lokasi_terms = get_terms( [ 'taxonomy' => 'loker_lokasi', 'hide_empty' => false ] );
         ?>
         <select name="loker_lokasi" aria-label="<?php esc_attr_e( 'Filter kota', 'hakajobspro' ); ?>">
-          <option value=""><?php esc_html_e( 'Semua Kota', 'hakajobspro' ); ?></option>
-          <?php foreach ( $lokasi_terms as $term ) : ?>
-            <option value="<?php echo esc_attr( $term->slug ); ?>">
-              <?php echo esc_html( $term->name ); ?>
-            </option>
-          <?php endforeach; ?>
+          <option value=""><?php esc_html_e( 'Semua Kota / Lokasi', 'hakajobspro' ); ?></option>
+          <?php if ( $lokasi_terms && ! is_wp_error( $lokasi_terms ) ) : ?>
+            <?php foreach ( $lokasi_terms as $term ) : ?>
+              <option value="<?php echo esc_attr( $term->slug ); ?>">
+                <?php echo esc_html( $term->name ); ?>
+              </option>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </select>
-        <?php endif; ?>
 
         <button type="submit"><?php esc_html_e( 'Cari Loker', 'hakajobspro' ); ?></button>
       </form>
@@ -62,7 +62,7 @@ get_header();
 <div class="container">
 
   <?php if ( get_theme_mod( 'hakajobspro_show_category_filter', true ) ) :
-    $all_cats = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => true ] );
+    $all_cats = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => false ] );
     if ( $all_cats && ! is_wp_error( $all_cats ) ) :
   ?>
   <div class="category-filter" style="padding-top:20px;" role="navigation" aria-label="<?php esc_attr_e( 'Filter kategori', 'hakajobspro' ); ?>">

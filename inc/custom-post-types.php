@@ -203,10 +203,62 @@ function hakajobspro_maybe_close_expired_loker() {
 }
 add_action( 'init', 'hakajobspro_maybe_close_expired_loker', 20 );
 
+/* Buat daftar term default otomatis (Lokasi, Kategori, Tipe) jika masih kosong agar dropdown filter langsung muncul */
+function hakajobspro_seed_default_terms() {
+    if ( ! get_option( 'hakajobspro_default_terms_seeded_v1' ) ) {
+        $existing_lokasi = get_terms( [ 'taxonomy' => 'loker_lokasi', 'hide_empty' => false, 'fields' => 'ids' ] );
+        if ( empty( $existing_lokasi ) || is_wp_error( $existing_lokasi ) ) {
+            $default_lokasi = [
+                'Bandar Lampung', 'Metro', 'Lampung Selatan', 'Lampung Tengah',
+                'Lampung Timur', 'Lampung Utara', 'Pringsewu', 'Pesawaran',
+                'Tanggamus', 'Tulang Bawang', 'Tulang Bawang Barat', 'Way Kanan',
+                'Lampung Barat', 'Pesisir Barat', 'Mesuji', 'Jakarta',
+                'Bandung', 'Surabaya', 'Bekasi', 'Tangerang', 'Palembang',
+                'Remote / WFH', 'Seluruh Indonesia',
+            ];
+            foreach ( $default_lokasi as $lok ) {
+                if ( ! term_exists( $lok, 'loker_lokasi' ) ) {
+                    wp_insert_term( $lok, 'loker_lokasi' );
+                }
+            }
+        }
+
+        $existing_kat = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => false, 'fields' => 'ids' ] );
+        if ( empty( $existing_kat ) || is_wp_error( $existing_kat ) ) {
+            $default_kat = [
+                'SMA / SMK', 'D3 / S1', 'Fresh Graduate', 'BUMN & Instansi',
+                'Administrasi & Perkantoran', 'IT & Teknologi', 'Keuangan & Perbankan',
+                'Pemasaran & Sales', 'Teknik & Industri', 'Kesehatan & Medis',
+            ];
+            foreach ( $default_kat as $kat ) {
+                if ( ! term_exists( $kat, 'loker_kategori' ) ) {
+                    wp_insert_term( $kat, 'loker_kategori' );
+                }
+            }
+        }
+
+        $existing_tipe = get_terms( [ 'taxonomy' => 'loker_tipe', 'hide_empty' => false, 'fields' => 'ids' ] );
+        if ( empty( $existing_tipe ) || is_wp_error( $existing_tipe ) ) {
+            $default_tipe = [
+                'Full-time', 'Part-time', 'Kontrak', 'Magang', 'Freelance', 'Remote',
+            ];
+            foreach ( $default_tipe as $tp ) {
+                if ( ! term_exists( $tp, 'loker_tipe' ) ) {
+                    wp_insert_term( $tp, 'loker_tipe' );
+                }
+            }
+        }
+
+        update_option( 'hakajobspro_default_terms_seeded_v1', 1 );
+    }
+}
+add_action( 'init', 'hakajobspro_seed_default_terms', 15 );
+
 /* Flush rewrite rules sekali saat tema aktif */
 function hakajobspro_flush_rewrite_rules() {
     hakajobspro_register_cpt_loker();
     hakajobspro_register_taxonomies();
+    hakajobspro_seed_default_terms();
     flush_rewrite_rules();
 }
 add_action( 'after_switch_theme', 'hakajobspro_flush_rewrite_rules' );

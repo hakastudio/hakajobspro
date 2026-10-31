@@ -17,7 +17,7 @@
   }
 
   // Tampilkan daftar Kategori Loker
-  $kat_list = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => true ] );
+  $kat_list = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => false ] );
   if ( $kat_list && ! is_wp_error( $kat_list ) ) :
   ?>
   <div class="widget">
