@@ -87,3 +87,4 @@ usort( $edu_terms, function( $a, $b ) {
 </div>
 
 <?php get_footer(); ?>
+

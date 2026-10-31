@@ -313,9 +313,16 @@ function hakajobspro_breadcrumb() {
     } elseif ( is_tax( 'loker_perusahaan' ) ) {
         echo '<li><a href="' . esc_url( home_url( '/perusahaan/' ) ) . '">' . esc_html__( 'Perusahaan', 'hakajobspro' ) . '</a></li>';
         echo '<li aria-current="page">' . esc_html( single_term_title( '', false ) ) . '</li>';
-    } elseif ( is_post_type_archive( 'loker' ) || is_tax( [ 'loker_kategori', 'loker_pendidikan', 'loker_lokasi', 'loker_tipe' ] ) ) {
-        echo '<li aria-current="page">' . esc_html( get_the_archive_title() ) . '</li>';
+    } elseif ( is_tax( [ 'loker_kategori', 'loker_pendidikan', 'loker_lokasi', 'loker_tipe' ] ) ) {
+        echo '<li><a href="' . esc_url( get_post_type_archive_link( 'loker' ) ) . '">'
+            . esc_html__( 'Lowongan Kerja', 'hakajobspro' ) . '</a></li>';
+        echo '<li aria-current="page">' . esc_html( single_term_title( '', false ) ) . '</li>';
+    } elseif ( is_post_type_archive( 'loker' ) ) {
+        echo '<li aria-current="page">' . esc_html__( 'Semua Lowongan Kerja', 'hakajobspro' ) . '</li>';
     } elseif ( is_page() ) {
+        echo '<li aria-current="page">' . esc_html( get_the_title() ) . '</li>';
+    } elseif ( is_archive() ) {
+        echo '<li aria-current="page">' . esc_html( wp_strip_all_tags( get_the_archive_title() ) ) . '</li>';
         echo '<li aria-current="page">' . esc_html( get_the_title() ) . '</li>';
     } elseif ( is_search() ) {
         echo '<li aria-current="page">' . sprintf(

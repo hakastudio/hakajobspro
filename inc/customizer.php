@@ -364,7 +364,51 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
     );
 
     /* ======================================================================
-       SECTION 5: INFORMASI KONTAK
+       SECTION 5: PENGATURAN SIDEBAR KANAN (LOKER POPULER & KATEGORI)
+       ====================================================================== */
+    $wp_customize->add_section( 'hakajobspro_sidebar_settings', [
+        'title'       => __( 'Pengaturan Sidebar Kanan', 'hakajobspro' ),
+        'description' => __( 'Atur tampilan widget Loker Populer dan daftar Kategori Lowongan Kerja di sidebar sebelah kanan.', 'hakajobspro' ),
+        'panel'       => 'hakajobspro_panel',
+        'priority'    => 45,
+    ] );
+
+    // 1. Pengaturan Loker Populer
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_sidebar_show_popular',
+        __( 'Tampilkan Widget Loker Populer', 'hakajobspro' ),
+        true, 'hakajobspro_sidebar_settings'
+    );
+
+    hakajobspro_add_text_setting( $wp_customize, 'hakajobspro_popular_widget_title',
+        __( 'Judul Widget Loker Populer', 'hakajobspro' ),
+        __( 'Loker Populer', 'hakajobspro' ),
+        'hakajobspro_sidebar_settings'
+    );
+
+    hakajobspro_add_number_setting( $wp_customize, 'hakajobspro_popular_widget_count',
+        __( 'Jumlah Loker Populer Ditampilkan', 'hakajobspro' ),
+        5, 'hakajobspro_sidebar_settings', 1, 15
+    );
+
+    // 2. Pengaturan Kategori Lowongan
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_sidebar_show_categories',
+        __( 'Tampilkan Widget Kategori Lowongan', 'hakajobspro' ),
+        true, 'hakajobspro_sidebar_settings'
+    );
+
+    hakajobspro_add_text_setting( $wp_customize, 'hakajobspro_sidebar_categories_title',
+        __( 'Judul Widget Kategori Lowongan', 'hakajobspro' ),
+        __( 'Kategori Lowongan', 'hakajobspro' ),
+        'hakajobspro_sidebar_settings'
+    );
+
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_sidebar_categories_hide_empty',
+        __( 'Sembunyikan Kategori yang Belum Memiliki Lowongan (0 loker)', 'hakajobspro' ),
+        false, 'hakajobspro_sidebar_settings'
+    );
+
+    /* ======================================================================
+       SECTION 6: INFORMASI KONTAK
        ====================================================================== */
     $wp_customize->add_section( 'hakajobspro_contact', [
         'title'    => __( 'Informasi Kontak', 'hakajobspro' ),

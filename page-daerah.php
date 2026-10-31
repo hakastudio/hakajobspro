@@ -119,3 +119,4 @@ usort( $locations, function( $a, $b ) {
 </div>
 
 <?php get_footer(); ?>
+
