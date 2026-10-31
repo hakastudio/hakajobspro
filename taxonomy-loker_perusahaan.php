@@ -25,6 +25,20 @@ $all_ids_q = new WP_Query( [
     'tax_query'      => [ [ 'taxonomy' => 'loker_perusahaan', 'field' => 'term_id', 'terms' => $term_id ] ],
 ] );
 
+// Fallback otomatis: ambil logo, lokasi, & website dari post loker terbaru perusahaan ini jika term meta kosong
+if ( ! empty( $all_ids_q->posts ) ) {
+    $latest_pid = $all_ids_q->posts[0];
+    if ( ! $logo_id && has_post_thumbnail( $latest_pid ) ) {
+        $logo_id = get_post_thumbnail_id( $latest_pid );
+    }
+    if ( ! $lokasi ) {
+        $lokasi = hakajobspro_get_loker_lokasi( $latest_pid );
+    }
+    if ( ! $website ) {
+        $website = get_post_meta( $latest_pid, '_loker_website', true );
+    }
+}
+
 $total_published = count( $all_ids_q->posts );
 $active_count    = 0;
 $closed_count    = 0;

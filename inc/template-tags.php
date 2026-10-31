@@ -304,8 +304,11 @@ function hakajobspro_breadcrumb() {
             echo '<li><a href="' . esc_url( $co_url ) . '">' . esc_html( $co_name ) . '</a></li>';
         }
         echo '<li aria-current="page">' . esc_html( get_the_title() ) . '</li>';
+    } elseif ( function_exists( 'hakajobspro_is_perusahaan_directory_request' ) && hakajobspro_is_perusahaan_directory_request() ) {
+        echo '<li aria-current="page">' . esc_html__( 'Daftar Perusahaan', 'hakajobspro' ) . '</li>';
     } elseif ( is_tax( 'loker_perusahaan' ) ) {
-        echo '<li aria-current="page">' . sprintf( esc_html__( 'Arsip Perusahaan: %s', 'hakajobspro' ), esc_html( single_term_title( '', false ) ) ) . '</li>';
+        echo '<li><a href="' . esc_url( home_url( '/perusahaan/' ) ) . '">' . esc_html__( 'Perusahaan', 'hakajobspro' ) . '</a></li>';
+        echo '<li aria-current="page">' . esc_html( single_term_title( '', false ) ) . '</li>';
     } elseif ( is_post_type_archive( 'loker' ) || is_tax( [ 'loker_kategori', 'loker_pendidikan', 'loker_lokasi', 'loker_tipe' ] ) ) {
         echo '<li aria-current="page">' . esc_html( get_the_archive_title() ) . '</li>';
     } elseif ( is_page() ) {
