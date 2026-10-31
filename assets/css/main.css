@@ -1748,9 +1748,85 @@ body.hakajobspro-anticopas select {
     .hero-stats { flex-direction: column; gap: 12px; }
 }
 
+/* ==========================================================================
+   SLOT IKLAN ADSENSE (.hjp-ad-slot)
+   ========================================================================== */
+
+.hjp-ad-slot {
+    width: 100%;
+    margin: 18px 0;
+    text-align: center;
+    overflow: hidden;
+}
+
+.hjp-ad-slot--header { margin: 0 0 12px; }
+.hjp-ad-slot--infeed { margin: 12px 0; }
+.hjp-ad-slot--single_top { margin: 0 24px 16px; width: auto; }
+.hjp-ad-slot--single_mid { margin: 20px 0; }
+.hjp-ad-slot--single_bottom { margin: 0 24px 20px; width: auto; }
+.hjp-ad-slot--sidebar { margin: 0 0 20px; }
+.hjp-ad-slot--footer { margin: 20px 0 0; }
+
+.hjp-ad-slot__label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 6px;
+}
+
+.hjp-ad-slot__inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.hjp-ad-slot__inner img,
+.hjp-ad-slot__inner iframe,
+.hjp-ad-slot__inner ins {
+    max-width: 100%;
+}
+
+.hjp-ad-placeholder-box {
+    background: #f8fafc;
+    border: 1.5px dashed #94a3b8;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #334155;
+    font-size: 12.5px;
+}
+
+.hjp-ad-placeholder-box strong {
+    color: var(--color-dark);
+    font-size: 13px;
+}
+
+.hjp-ad-placeholder-box a {
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+@media (max-width: 480px) {
+    .hjp-ad-slot--single_top,
+    .hjp-ad-slot--single_bottom {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+}
+
 /* Print */
 @media print {
-    .site-header, .main-nav, .topbar, .sidebar, .site-footer, .scroll-top { display: none; }
+    .site-header, .main-nav, .topbar, .sidebar, .site-footer, .scroll-top, .hjp-ad-slot { display: none; }
     .layout { grid-template-columns: 1fr; }
     .single-loker__apply { display: none; }
 }

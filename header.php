@@ -17,53 +17,6 @@
   <?php esc_html_e( 'Langsung ke konten', 'hakajobspro' ); ?>
 </a>
 
-<?php
-// --- TOP BAR dengan ticker loker terbaru ---
-$show_ticker = get_theme_mod( 'hakajobspro_show_ticker', true );
-if ( $show_ticker ) :
-    $recent_loker = new WP_Query( [
-        'post_type'      => 'loker',
-        'posts_per_page' => 5,
-        'post_status'    => 'publish',
-        'fields'         => 'ids',
-    ] );
-    if ( $recent_loker->have_posts() ) :
-        $ticker_label = get_theme_mod( 'hakajobspro_ticker_label', __( 'Terbaru', 'hakajobspro' ) );
-?>
-<div class="topbar" role="complementary" aria-label="<?php esc_attr_e( 'Informasi terkini', 'hakajobspro' ); ?>">
-  <div class="container">
-    <div class="topbar-ticker" aria-live="polite" aria-atomic="false">
-      <span class="ticker-label"><?php echo esc_html( $ticker_label ); ?></span>
-      <div class="ticker-track">
-        <span>
-          <?php
-          $posts_data = get_posts( [
-              'post_type'      => 'loker',
-              'posts_per_page' => 6,
-              'post_status'    => 'publish',
-          ] );
-          $items = array_map( function( $p ) {
-              return '<a href="' . esc_url( get_permalink( $p->ID ) ) . '">'
-                   . esc_html( $p->post_title ) . '</a>';
-          }, $posts_data );
-          echo implode( ' &nbsp;|&nbsp; ', $items );
-          ?>
-        </span>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <?php
-      $phone = get_theme_mod( 'hakajobspro_phone', '' );
-      if ( $phone ) :
-          echo '<a href="tel:' . esc_attr( preg_replace( '/\D/', '', $phone ) ) . '">'
-               . esc_html( $phone ) . '</a>';
-      endif;
-      ?>
-    </div>
-  </div>
-</div>
-<?php endif; wp_reset_postdata(); endif; ?>
-
 <!-- HEADER -->
 <header class="site-header" role="banner">
   <div class="container">
@@ -150,3 +103,13 @@ function hakajobspro_fallback_nav() {
 
 <div id="main-content">
 
+<?php
+// SLOT IKLAN 1: BAWAH HEADER
+if ( function_exists( 'hakajobspro_get_ad_slot_html' ) ) :
+    $header_ad = hakajobspro_get_ad_slot_html( 'header' );
+    if ( $header_ad ) :
+?>
+<div class="container" style="padding-top:16px;">
+  <?php echo $header_ad; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+</div>
+<?php endif; endif; ?>

@@ -3,6 +3,17 @@
  * footer.php — Footer global tema Hakajobspro
  */
 ?>
+<?php
+// SLOT IKLAN 7: ATAS FOOTER
+if ( function_exists( 'hakajobspro_get_ad_slot_html' ) ) :
+    $footer_ad = hakajobspro_get_ad_slot_html( 'footer' );
+    if ( $footer_ad ) :
+?>
+<div class="container" style="padding-bottom:24px;">
+  <?php echo $footer_ad; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+</div>
+<?php endif; endif; ?>
+
 </div><!-- #main-content -->
 
 <footer class="site-footer" role="contentinfo" aria-label="<?php esc_attr_e( 'Footer', 'hakajobspro' ); ?>">

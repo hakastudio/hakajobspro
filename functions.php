@@ -169,7 +169,6 @@ function hakajobspro_customizer_css() {
     $primary     = sanitize_hex_color( get_theme_mod( 'hakajobspro_color_primary',     '#e63946' ) ) ?: '#e63946';
     $dark        = sanitize_hex_color( get_theme_mod( 'hakajobspro_color_dark',        '#1d3557' ) ) ?: '#1d3557';
     $body_bg     = sanitize_hex_color( get_theme_mod( 'hakajobspro_body_bg',           '#f4f6f9' ) ) ?: '#f4f6f9';
-    $topbar_bg   = sanitize_hex_color( get_theme_mod( 'hakajobspro_topbar_bg',         '#1d3557' ) ) ?: '#1d3557';
     $header_bg   = sanitize_hex_color( get_theme_mod( 'hakajobspro_header_bg',         '#ffffff' ) ) ?: '#ffffff';
     $nav_bg      = sanitize_hex_color( get_theme_mod( 'hakajobspro_nav_bg',            '#1d3557' ) ) ?: '#1d3557';
     $nav_text    = sanitize_hex_color( get_theme_mod( 'hakajobspro_nav_text',          '#ffffff' ) ) ?: '#ffffff';
@@ -207,7 +206,6 @@ function hakajobspro_customizer_css() {
         --container:         <?php echo (int) $container_width; ?>px;
     }
     html { font-size: <?php echo (int) $font_size; ?>px; }
-    .topbar { background: <?php echo esc_attr( $topbar_bg ); ?>; }
     .main-nav { background: <?php echo esc_attr( $nav_bg ); ?>; }
     .nav-menu > li > a { color: <?php echo esc_attr( $nav_text ); ?>; }
     .nav-menu > li > a:hover,
@@ -228,6 +226,7 @@ add_action( 'wp_head', 'hakajobspro_customizer_css' );
    ========================================================================== */
 
 require HAKAJOBSPRO_DIR . '/inc/custom-post-types.php';
+require HAKAJOBSPRO_DIR . '/inc/adsense.php';
 require HAKAJOBSPRO_DIR . '/inc/customizer.php';
 require HAKAJOBSPRO_DIR . '/inc/template-tags.php';
 require HAKAJOBSPRO_DIR . '/inc/meta-boxes.php';

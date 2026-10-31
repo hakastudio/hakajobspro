@@ -531,3 +531,4 @@ class Hakajobspro_Theme_Updater {
 }
 
 new Hakajobspro_Theme_Updater();
+

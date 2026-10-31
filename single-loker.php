@@ -106,6 +106,8 @@ while ( have_posts() ) : the_post();
       </div>
     </header>
 
+    <?php if ( function_exists( 'hakajobspro_render_ad_slot' ) ) hakajobspro_render_ad_slot( 'single_top' ); ?>
+
     <!-- GRID INFO DETAIL -->
     <div class="loker-detail-grid">
 
@@ -171,6 +173,8 @@ while ( have_posts() ) : the_post();
       <!-- AJAKAN GABUNG SALURAN WHATSAPP DI AKHIR ARTIKEL -->
       <?php hakajobspro_render_wa_channel_cta(); ?>
     </div>
+
+    <?php if ( function_exists( 'hakajobspro_render_ad_slot' ) ) hakajobspro_render_ad_slot( 'single_bottom' ); ?>
 
     <!-- TOMBOL LAMAR -->
     <?php if ( ! $expired && $link_lamar ) : ?>

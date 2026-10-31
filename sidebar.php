@@ -6,6 +6,11 @@
 <aside class="sidebar" role="complementary" aria-label="<?php esc_attr_e( 'Sidebar', 'hakajobspro' ); ?>">
 
   <?php
+  // SLOT IKLAN 6: SIDEBAR KANAN
+  if ( function_exists( 'hakajobspro_render_ad_slot' ) ) {
+      hakajobspro_render_ad_slot( 'sidebar' );
+  }
+
   // Tampilkan Widget Loker Populer otomatis
   if ( function_exists( 'hakajobspro_render_popular_loker_widget' ) ) {
       hakajobspro_render_popular_loker_widget( 5 );

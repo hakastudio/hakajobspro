@@ -36,10 +36,6 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
             'label'   => __( 'Warna Latar Halaman (Body)', 'hakajobspro' ),
             'default' => '#f4f6f9',
         ],
-        'hakajobspro_topbar_bg' => [
-            'label'   => __( 'Warna Latar Topbar (Running Text)', 'hakajobspro' ),
-            'default' => '#1d3557',
-        ],
         'hakajobspro_header_bg' => [
             'label'   => __( 'Warna Latar Header', 'hakajobspro' ),
             'default' => '#ffffff',
@@ -149,17 +145,6 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
     hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_show_search_header',
         __( 'Tampilkan Form Pencarian di Header', 'hakajobspro' ),
         true, 'hakajobspro_header'
-    );
-
-    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_show_ticker',
-        __( 'Tampilkan Running Text Loker Terbaru', 'hakajobspro' ),
-        true, 'hakajobspro_header'
-    );
-
-    hakajobspro_add_text_setting( $wp_customize, 'hakajobspro_ticker_label',
-        __( 'Label Running Text', 'hakajobspro' ),
-        __( 'Terbaru', 'hakajobspro' ),
-        'hakajobspro_header'
     );
 
     /* ======================================================================
@@ -442,6 +427,119 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
         __( 'Tampilkan Tombol Kembali ke Atas', 'hakajobspro' ),
         true, 'hakajobspro_footer'
     );
+
+    /* ======================================================================
+       SECTION 8: SLOT PEMASANGAN IKLAN ADSENSE (ON/OFF & KODE SCRIPT)
+       ====================================================================== */
+    $wp_customize->add_section( 'hakajobspro_adsense', [
+        'title'       => __( 'Slot Iklan AdSense (On/Off)', 'hakajobspro' ),
+        'description' => __( 'Aktifkan/nonaktifkan (ON/OFF) setiap slot iklan dan tempelkan kode Google AdSense atau banner HTML Anda. Tersedia juga tampilan layar penuh di menu WP Admin: Appearance -> Iklan AdSense.', 'hakajobspro' ),
+        'panel'       => 'hakajobspro_panel',
+        'priority'    => 80,
+    ] );
+
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ads_enable_all',
+        __( 'Saklar Utama: Aktifkan Sistem Iklan di Website', 'hakajobspro' ),
+        true, 'hakajobspro_adsense'
+    );
+
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ads_show_label',
+        __( 'Tampilkan Label "IKLAN / ADVERTISEMENT" di Atas Slot', 'hakajobspro' ),
+        true, 'hakajobspro_adsense'
+    );
+
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ads_admin_placeholder',
+        __( 'Tampilkan Pratinjau Kotak Slot Kosong (Khusus Admin)', 'hakajobspro' ),
+        true, 'hakajobspro_adsense'
+    );
+
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ads_head_enable',
+        __( 'ON/OFF: Script <head> Google AdSense (Auto Ads)', 'hakajobspro' ),
+        false, 'hakajobspro_adsense'
+    );
+
+    hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ads_head_code',
+        __( 'Kode Script <head> Google AdSense', 'hakajobspro' ),
+        '', 'hakajobspro_adsense'
+    );
+
+    // Slot 1: Header
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ad_header_enable',
+        __( 'ON/OFF Slot 1: Bawah Header (Atas Halaman)', 'hakajobspro' ),
+        false, 'hakajobspro_adsense'
+    );
+    hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ad_header_code',
+        __( 'Kode Iklan Slot 1 (Bawah Header)', 'hakajobspro' ),
+        '', 'hakajobspro_adsense'
+    );
+
+    // Slot 2: In-Feed Daftar Loker
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ad_infeed_enable',
+        __( 'ON/OFF Slot 2: Di Tengah Daftar Loker (In-Feed)', 'hakajobspro' ),
+        false, 'hakajobspro_adsense'
+    );
+    hakajobspro_add_number_setting( $wp_customize, 'hakajobspro_ad_infeed_after',
+        __( 'Slot 2 Muncul Setelah Loker Ke-', 'hakajobspro' ),
+        3, 'hakajobspro_adsense', 1, 20
+    );
+    hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ad_infeed_code',
+        __( 'Kode Iklan Slot 2 (In-Feed Daftar Loker)', 'hakajobspro' ),
+        '', 'hakajobspro_adsense'
+    );
+
+    // Slot 3: Atas Artikel Detail Loker
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ad_single_top_enable',
+        __( 'ON/OFF Slot 3: Atas Artikel Detail Lowongan', 'hakajobspro' ),
+        false, 'hakajobspro_adsense'
+    );
+    hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ad_single_top_code',
+        __( 'Kode Iklan Slot 3 (Atas Detail Loker)', 'hakajobspro' ),
+        '', 'hakajobspro_adsense'
+    );
+
+    // Slot 4: Tengah Deskripsi Loker
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ad_single_mid_enable',
+        __( 'ON/OFF Slot 4: Tengah Deskripsi Lowongan', 'hakajobspro' ),
+        false, 'hakajobspro_adsense'
+    );
+    hakajobspro_add_number_setting( $wp_customize, 'hakajobspro_ad_single_mid_p',
+        __( 'Slot 4 Muncul Setelah Paragraf Ke-', 'hakajobspro' ),
+        2, 'hakajobspro_adsense', 1, 15
+    );
+    hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ad_single_mid_code',
+        __( 'Kode Iklan Slot 4 (Tengah Deskripsi Loker)', 'hakajobspro' ),
+        '', 'hakajobspro_adsense'
+    );
+
+    // Slot 5: Bawah Artikel / Sebelum Tombol Lamar
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ad_single_bottom_enable',
+        __( 'ON/OFF Slot 5: Bawah Artikel / Sebelum Tombol Lamar', 'hakajobspro' ),
+        false, 'hakajobspro_adsense'
+    );
+    hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ad_single_bottom_code',
+        __( 'Kode Iklan Slot 5 (Bawah Artikel Loker)', 'hakajobspro' ),
+        '', 'hakajobspro_adsense'
+    );
+
+    // Slot 6: Sidebar Kanan
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ad_sidebar_enable',
+        __( 'ON/OFF Slot 6: Sidebar Kanan', 'hakajobspro' ),
+        false, 'hakajobspro_adsense'
+    );
+    hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ad_sidebar_code',
+        __( 'Kode Iklan Slot 6 (Sidebar Kanan)', 'hakajobspro' ),
+        '', 'hakajobspro_adsense'
+    );
+
+    // Slot 7: Atas Footer
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ad_footer_enable',
+        __( 'ON/OFF Slot 7: Atas Footer', 'hakajobspro' ),
+        false, 'hakajobspro_adsense'
+    );
+    hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ad_footer_code',
+        __( 'Kode Iklan Slot 7 (Atas Footer)', 'hakajobspro' ),
+        '', 'hakajobspro_adsense'
+    );
 }
 add_action( 'customize_register', 'hakajobspro_customize_register' );
 
@@ -500,6 +598,22 @@ function hakajobspro_add_number_setting( $wpc, $id, $label, $default, $section, 
         'section'     => $section,
         'type'        => 'number',
         'input_attrs' => [ 'min' => $min, 'max' => $max ],
+    ] );
+}
+
+function hakajobspro_add_ad_code_setting( $wpc, $id, $label, $default, $section ) {
+    $wpc->add_setting( $id, [
+        'default'           => $default,
+        'sanitize_callback' => 'hakajobspro_sanitize_ad_code',
+        'transport'         => 'refresh',
+    ] );
+    $wpc->add_control( $id, [
+        'label'       => $label,
+        'section'     => $section,
+        'type'        => 'textarea',
+        'input_attrs' => [
+            'placeholder' => 'Tempel kode AdSense (<ins class="adsbygoogle"...></ins>) atau HTML banner di sini...',
+        ],
     ] );
 }
 

@@ -124,9 +124,16 @@ $loker_query = new WP_Query( [
     <!-- Daftar lowongan -->
     <?php if ( $loker_query->have_posts() ) : ?>
     <div class="loker-list">
-      <?php while ( $loker_query->have_posts() ) : $loker_query->the_post();
+      <?php
+      $infeed_after = max( 1, absint( get_theme_mod( 'hakajobspro_ad_infeed_after', 3 ) ) );
+      $loop_i       = 0;
+      while ( $loker_query->have_posts() ) : $loker_query->the_post();
+        $loop_i++;
         set_query_var( 'hakajobspro_view', 'list' );
         get_template_part( 'template-parts/content', 'loker' );
+        if ( $loop_i === $infeed_after && function_exists( 'hakajobspro_render_ad_slot' ) ) {
+            hakajobspro_render_ad_slot( 'infeed' );
+        }
       endwhile; wp_reset_postdata(); ?>
     </div>
 

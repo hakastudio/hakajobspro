@@ -46,3 +46,4 @@
    - Masuk ke **Dashboard -> Updates**, **Appearance -> Themes**, atau **Appearance -> Update Tema (GitHub)**.
    - Klik **Cek Pembaruan dari GitHub Sekarang** (atau tunggu pengecekan berkala otomatis).
    - Klik **Perbarui Tema Sekarang** untuk memperbarui tema secara langsung dari Dasbor WordPress tanpa perlu mengunggah ulang file ZIP secara manual.
+
