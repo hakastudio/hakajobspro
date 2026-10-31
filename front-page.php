@@ -62,7 +62,27 @@ get_header();
 <div class="container">
 
   <?php if ( get_theme_mod( 'hakajobspro_show_category_filter', true ) ) :
-    $all_cats = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => false ] );
+    $cat_hide_empty = (bool) get_theme_mod( 'hakajobspro_cat_filter_hide_empty', false );
+    $cat_show_count = (bool) get_theme_mod( 'hakajobspro_cat_filter_show_count', true );
+    $cat_orderby    = get_theme_mod( 'hakajobspro_cat_filter_orderby', 'name' );
+    $cat_max        = absint( get_theme_mod( 'hakajobspro_cat_filter_max', 0 ) );
+
+    $cat_args = [
+        'taxonomy'   => 'loker_kategori',
+        'hide_empty' => $cat_hide_empty,
+    ];
+    if ( 'count' === $cat_orderby ) {
+        $cat_args['orderby'] = 'count';
+        $cat_args['order']   = 'DESC';
+    } else {
+        $cat_args['orderby'] = 'name';
+        $cat_args['order']   = 'ASC';
+    }
+    if ( $cat_max > 0 ) {
+        $cat_args['number'] = $cat_max;
+    }
+
+    $all_cats = get_terms( $cat_args );
     if ( $all_cats && ! is_wp_error( $all_cats ) ) :
   ?>
   <div class="category-filter" style="padding-top:20px;" role="navigation" aria-label="<?php esc_attr_e( 'Filter kategori', 'hakajobspro' ); ?>">
@@ -72,7 +92,7 @@ get_header();
     <?php foreach ( $all_cats as $cat ) : ?>
     <a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" class="cat-chip">
       <?php echo esc_html( $cat->name ); ?>
-      <?php if ( $cat->count > 0 ) : ?>
+      <?php if ( $cat_show_count && $cat->count > 0 ) : ?>
       <span>(<?php echo (int) $cat->count; ?>)</span>
       <?php endif; ?>
     </a>

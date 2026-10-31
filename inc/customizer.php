@@ -221,8 +221,33 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
     );
 
     hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_show_category_filter',
-        __( 'Tampilkan Filter Kategori di Beranda', 'hakajobspro' ),
+        __( 'Tampilkan Tombol Filter Kategori di Beranda', 'hakajobspro' ),
         true, 'hakajobspro_homepage'
+    );
+
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_cat_filter_hide_empty',
+        __( 'Sembunyikan Kategori yang Masih Kosong (0 loker)', 'hakajobspro' ),
+        false, 'hakajobspro_homepage'
+    );
+
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_cat_filter_show_count',
+        __( 'Tampilkan Angka Jumlah Lowongan di Tombol (contoh: (2))', 'hakajobspro' ),
+        true, 'hakajobspro_homepage'
+    );
+
+    hakajobspro_add_select_setting( $wp_customize, 'hakajobspro_cat_filter_orderby',
+        __( 'Urutan Tombol Kategori di Beranda', 'hakajobspro' ),
+        'name',
+        [
+            'name'  => __( 'Sesuai Abjad (A - Z)', 'hakajobspro' ),
+            'count' => __( 'Lowongan Terbanyak di Depan', 'hakajobspro' ),
+        ],
+        'hakajobspro_homepage'
+    );
+
+    hakajobspro_add_number_setting( $wp_customize, 'hakajobspro_cat_filter_max',
+        __( 'Batas Maksimal Tombol Kategori (0 = Tampilkan Semua)', 'hakajobspro' ),
+        0, 'hakajobspro_homepage', 0, 30
     );
 
     hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_show_tips_home',
@@ -678,6 +703,22 @@ function hakajobspro_add_textarea_setting( $wpc, $id, $label, $default, $section
         'label'   => $label,
         'section' => $section,
         'type'    => 'textarea',
+    ] );
+}
+
+function hakajobspro_add_select_setting( $wpc, $id, $label, $default, $choices, $section ) {
+    $wpc->add_setting( $id, [
+        'default'           => $default,
+        'sanitize_callback' => function( $v ) use ( $choices ) {
+            return array_key_exists( $v, $choices ) ? $v : array_key_first( $choices );
+        },
+        'transport'         => 'refresh',
+    ] );
+    $wpc->add_control( $id, [
+        'label'   => $label,
+        'section' => $section,
+        'type'    => 'select',
+        'choices' => $choices,
     ] );
 }
 
