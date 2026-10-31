@@ -116,13 +116,14 @@ get_header();
   <div class="layout">
     <main role="main">
       <?php
-      $latest_count = absint( get_theme_mod( 'hakajobspro_latest_count', 9 ) );
+      $latest_count = absint( get_theme_mod( 'hakajobspro_latest_count', 10 ) );
       $latest_query = new WP_Query( [
-          'post_type'      => 'loker',
-          'posts_per_page' => $latest_count,
-          'post_status'    => 'publish',
-          'orderby'        => 'date',
-          'order'          => 'DESC',
+          'post_type'           => hakajobspro_get_loker_post_types(),
+          'posts_per_page'      => $latest_count,
+          'post_status'         => 'publish',
+          'ignore_sticky_posts' => true,
+          'orderby'             => 'date',
+          'order'               => 'DESC',
       ] );
       if ( $latest_query->have_posts() ) :
       ?>
@@ -149,6 +150,12 @@ get_header();
             }
           endwhile; wp_reset_postdata(); ?>
         </div>
+
+        <div style="text-align:center;margin-top:20px;">
+          <a href="<?php echo esc_url( get_post_type_archive_link( 'loker' ) ); ?>" class="btn btn--primary">
+            <?php esc_html_e( 'Lihat Semua Lowongan Kerja', 'hakajobspro' ); ?> &rarr;
+          </a>
+        </div>
       </section>
       <?php endif; ?>
     </main>
@@ -159,10 +166,12 @@ get_header();
   <!-- SEKSI KHUSUS TIPS KARIER (POS ARTIKEL WP — TERPISAH DARI LOKER) -->
   <?php
   if ( get_theme_mod( 'hakajobspro_show_tips_home', true ) ) :
+    $shown_ids  = ! empty( $latest_query->posts ) ? wp_list_pluck( $latest_query->posts, 'ID' ) : [];
     $tips_query = new WP_Query( [
         'post_type'           => 'post',
         'posts_per_page'      => 3,
         'post_status'         => 'publish',
+        'post__not_in'        => $shown_ids,
         'ignore_sticky_posts' => true,
     ] );
     if ( $tips_query->have_posts() ) :

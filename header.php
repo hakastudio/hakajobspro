@@ -77,7 +77,7 @@
 
 <!-- Breadcrumb (tersembunyi di halaman utama) -->
 <?php if ( ! is_front_page() ) : ?>
-<div class="breadcrumb">
+<div class="breadcrumb-bar">
   <div class="container">
     <?php hakajobspro_breadcrumb(); ?>
   </div>

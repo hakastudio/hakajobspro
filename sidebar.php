@@ -28,7 +28,11 @@
         <li>
           <a href="<?php echo esc_url( get_term_link( $kat ) ); ?>">
             <span><?php echo esc_html( $kat->name ); ?></span>
-            <span class="count"><?php echo (int) $kat->count; ?></span>
+            <?php if ( $kat->count > 0 ) : ?>
+              <span class="count"><?php echo (int) $kat->count; ?></span>
+            <?php else : ?>
+              <span class="count" aria-hidden="true">&rsaquo;</span>
+            <?php endif; ?>
           </a>
         </li>
         <?php endforeach; ?>

@@ -222,17 +222,45 @@ while ( have_posts() ) : the_post();
 
   <!-- LOKER TERKAIT -->
   <?php
-  $kat_ids = wp_list_pluck( get_the_terms( $post_id, 'loker_kategori' ) ?: [], 'term_id' );
-  $related = new WP_Query( [
-      'post_type'      => 'loker',
+  $post_types = hakajobspro_get_loker_post_types();
+  $kat_ids    = wp_list_pluck( get_the_terms( $post_id, 'loker_kategori' ) ?: [], 'term_id' );
+  $rel_ids    = [];
+
+  if ( ! empty( $kat_ids ) ) {
+      $rel_ids = get_posts( [
+          'post_type'      => $post_types,
+          'posts_per_page' => 4,
+          'post_status'    => 'publish',
+          'post__not_in'   => [ $post_id ],
+          'tax_query'      => [ [ 'taxonomy' => 'loker_kategori', 'terms' => $kat_ids ] ],
+          'orderby'        => 'date',
+          'order'          => 'DESC',
+          'fields'         => 'ids',
+      ] );
+  }
+
+  if ( count( $rel_ids ) < 4 ) {
+      $more_ids = get_posts( [
+          'post_type'      => $post_types,
+          'posts_per_page' => 4 - count( $rel_ids ),
+          'post_status'    => 'publish',
+          'post__not_in'   => array_merge( [ $post_id ], $rel_ids ),
+          'orderby'        => 'date',
+          'order'          => 'DESC',
+          'fields'         => 'ids',
+      ] );
+      $rel_ids = array_merge( $rel_ids, $more_ids );
+  }
+
+  $related = ! empty( $rel_ids ) ? new WP_Query( [
+      'post_type'      => $post_types,
       'posts_per_page' => 4,
       'post_status'    => 'publish',
-      'post__not_in'   => [ $post_id ],
-      'tax_query'      => $kat_ids ? [ [ 'taxonomy' => 'loker_kategori', 'terms' => $kat_ids ] ] : [],
-      'orderby'        => 'date',
-      'order'          => 'DESC',
-  ] );
-  if ( $related->have_posts() ) :
+      'post__in'       => $rel_ids,
+      'orderby'        => 'post__in',
+  ] ) : null;
+
+  if ( $related && $related->have_posts() ) :
   ?>
   <section style="margin-top:28px;" aria-labelledby="related-heading">
     <div class="section-head">

@@ -10,7 +10,7 @@ $view     = isset( $hakajobspro_view ) ? $hakajobspro_view : 'grid';
 $featured = get_post_meta( $post_id, '_loker_featured', true ) === 'Ya';
 $expired  = hakajobspro_is_expired( $post_id );
 
-$perusahaan     = get_post_meta( $post_id, '_loker_perusahaan', true );
+$perusahaan     = hakajobspro_get_loker_perusahaan( $post_id );
 $perusahaan_url = hakajobspro_get_perusahaan_url( $post_id );
 $tipe_kerja     = hakajobspro_get_loker_tipe( $post_id );
 $lokasi_det     = hakajobspro_get_loker_lokasi( $post_id );

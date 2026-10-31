@@ -68,6 +68,45 @@ function hakajobspro_is_expired( $post_id = null ) {
    HELPER: AMBIL URL ARSIP PERUSAHAAN DARI POST LOKER
    ========================================================================== */
 
+/* ==========================================================================
+   HELPER: DAFTAR POST TYPE LOWONGAN (GABUNGKAN CPT 'loker' & POS STANDAR 'post')
+   ========================================================================== */
+
+function hakajobspro_get_loker_post_types() {
+    if ( get_theme_mod( 'hakajobspro_include_posts_in_loker', true ) ) {
+        return [ 'loker', 'post' ];
+    }
+    return [ 'loker' ];
+}
+
+/* ==========================================================================
+   HELPER: AMBIL NAMA PERUSAHAAN & URL ARSIP PERUSAHAAN
+   ========================================================================== */
+
+function hakajobspro_get_loker_perusahaan( $post_id = null ) {
+    $post_id    = $post_id ?: get_the_ID();
+    $perusahaan = get_post_meta( $post_id, '_loker_perusahaan', true );
+    if ( $perusahaan ) {
+        return $perusahaan;
+    }
+
+    $terms = get_the_terms( $post_id, 'loker_perusahaan' );
+    if ( $terms && ! is_wp_error( $terms ) ) {
+        return $terms[0]->name;
+    }
+
+    // Fallback cerdas untuk artikel lowongan lama di menu Pos ('post'): ekstrak nama PT/CV/Bank/Instansi dari judul
+    $title = html_entity_decode( get_the_title( $post_id ), ENT_QUOTES, 'UTF-8' );
+    if ( preg_match( '/\b((?:PT|CV|UD|Perum|Bank|Kementerian|RS|RSU|RSUD|Klinik|Yayasan|BUMN|Hotel|Kopi)\b[^,\-\|\(\n\r]*)/i', $title, $m ) ) {
+        $extracted = trim( preg_replace( '/\s+(?:Oktober|November|Desember|Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|\d{4})\b.*$/i', '', $m[1] ) );
+        if ( $extracted ) {
+            return $extracted;
+        }
+    }
+
+    return '';
+}
+
 function hakajobspro_get_perusahaan_url( $post_id = null ) {
     $post_id = $post_id ?: get_the_ID();
     $terms   = get_the_terms( $post_id, 'loker_perusahaan' );
@@ -93,7 +132,7 @@ function hakajobspro_get_perusahaan_url( $post_id = null ) {
 }
 
 /* ==========================================================================
-   HELPER: AMBIL PENDIDIKAN, TIPE PEKERJAAN, & LOKASI (TAKSONOMI + FALLBACK META)
+   HELPER: AMBIL PENDIDIKAN, TIPE PEKERJAAN, & LOKASI (TAKSONOMI + FALLBACK META/POS)
    ========================================================================== */
 
 function hakajobspro_get_loker_pendidikan( $post_id = null ) {
@@ -102,7 +141,24 @@ function hakajobspro_get_loker_pendidikan( $post_id = null ) {
     if ( $terms && ! is_wp_error( $terms ) ) {
         return implode( ', ', wp_list_pluck( $terms, 'name' ) );
     }
-    return (string) get_post_meta( $post_id, '_loker_pendidikan', true );
+    $meta = (string) get_post_meta( $post_id, '_loker_pendidikan', true );
+    if ( $meta ) {
+        return $meta;
+    }
+    // Fallback untuk artikel Pos standar yang memiliki kategori jenjang pendidikan
+    $cats = get_the_category( $post_id );
+    if ( ! empty( $cats ) ) {
+        $edu_names = [];
+        foreach ( $cats as $c ) {
+            if ( preg_match( '/\b(SMA|SMK|D1|D2|D3|D4|S1|S2|SMP)\b/i', $c->name ) ) {
+                $edu_names[] = $c->name;
+            }
+        }
+        if ( ! empty( $edu_names ) ) {
+            return implode( ', ', $edu_names );
+        }
+    }
+    return '';
 }
 
 function hakajobspro_get_loker_tipe( $post_id = null ) {
@@ -111,7 +167,25 @@ function hakajobspro_get_loker_tipe( $post_id = null ) {
     if ( $terms && ! is_wp_error( $terms ) ) {
         return implode( ', ', wp_list_pluck( $terms, 'name' ) );
     }
-    return (string) get_post_meta( $post_id, '_loker_tipe_kerja', true );
+    $meta = (string) get_post_meta( $post_id, '_loker_tipe_kerja', true );
+    if ( $meta ) {
+        return $meta;
+    }
+    // Fallback untuk artikel Pos standar
+    $title = get_the_title( $post_id );
+    if ( stripos( $title, 'Magang' ) !== false || stripos( $title, 'Internship' ) !== false ) {
+        return 'Magang';
+    }
+    if ( stripos( $title, 'Freelance' ) !== false ) {
+        return 'Freelance';
+    }
+    if ( stripos( $title, 'Part-time' ) !== false || stripos( $title, 'Part Time' ) !== false ) {
+        return 'Part-time';
+    }
+    if ( get_post_type( $post_id ) === 'post' ) {
+        return 'Full-time';
+    }
+    return '';
 }
 
 function hakajobspro_get_loker_lokasi( $post_id = null ) {
@@ -123,6 +197,20 @@ function hakajobspro_get_loker_lokasi( $post_id = null ) {
     $terms = get_the_terms( $post_id, 'loker_lokasi' );
     if ( $terms && ! is_wp_error( $terms ) ) {
         return implode( ', ', wp_list_pluck( $terms, 'name' ) );
+    }
+    // Fallback untuk artikel Pos standar: ambil dari kategori nama daerah
+    $cats = get_the_category( $post_id );
+    if ( ! empty( $cats ) ) {
+        $ignore_slugs = [ 'daerah', 'uncategorized', 'lowongan-kerja', 'loker', 'sma-smk', 'd3-s1', 's1', 'd3', 'tips-karier' ];
+        $loc_names    = [];
+        foreach ( $cats as $c ) {
+            if ( ! in_array( $c->slug, $ignore_slugs, true ) && ! preg_match( '/\b(SMA|SMK|D3|S1)\b/i', $c->name ) ) {
+                $loc_names[] = $c->name;
+            }
+        }
+        if ( ! empty( $loc_names ) ) {
+            return implode( ', ', $loc_names );
+        }
     }
     return '';
 }
@@ -248,7 +336,7 @@ function hakajobspro_has_sidebar() {
    ========================================================================== */
 
 function hakajobspro_track_loker_views() {
-    if ( ! is_singular( 'loker' ) || is_admin() ) {
+    if ( ! is_singular( [ 'loker', 'post' ] ) || is_admin() ) {
         return;
     }
     $post_id = get_queried_object_id();
@@ -259,29 +347,48 @@ function hakajobspro_track_loker_views() {
 add_action( 'wp', 'hakajobspro_track_loker_views' );
 
 function hakajobspro_render_popular_loker_widget( $count = 5 ) {
-    $exclude_id = is_singular( 'loker' ) ? [ get_the_ID() ] : [];
+    $exclude_id = is_singular( [ 'loker', 'post' ] ) ? [ get_the_ID() ] : [];
+    $post_types = hakajobspro_get_loker_post_types();
 
-    // Ambil loker berdasarkan jumlah tayangan (_loker_views) tertinggi
-    $pop_query = new WP_Query( [
-        'post_type'      => 'loker',
+    // 1. Ambil ID loker yang sudah memiliki jumlah tayangan (_loker_views) tertinggi
+    $viewed_ids = get_posts( [
+        'post_type'      => $post_types,
         'posts_per_page' => $count,
         'post_status'    => 'publish',
         'post__not_in'   => $exclude_id,
         'meta_key'       => '_loker_views',
         'orderby'        => [ 'meta_value_num' => 'DESC', 'date' => 'DESC' ],
+        'fields'         => 'ids',
     ] );
 
-    // Fallback jika belum ada data views (situs baru): ambil loker terbaru/unggulan
-    if ( ! $pop_query->have_posts() ) {
-        $pop_query = new WP_Query( [
-            'post_type'      => 'loker',
-            'posts_per_page' => $count,
+    // 2. Jika jumlah yang sudah punya _loker_views kurang dari $count, genapkan dengan loker terbaru
+    if ( count( $viewed_ids ) < $count ) {
+        $needed     = $count - count( $viewed_ids );
+        $recent_ids = get_posts( [
+            'post_type'      => $post_types,
+            'posts_per_page' => $needed,
             'post_status'    => 'publish',
-            'post__not_in'   => $exclude_id,
+            'post__not_in'   => array_merge( $exclude_id, $viewed_ids ),
             'orderby'        => 'date',
             'order'          => 'DESC',
+            'fields'         => 'ids',
         ] );
+        $final_ids = array_merge( $viewed_ids, $recent_ids );
+    } else {
+        $final_ids = $viewed_ids;
     }
+
+    if ( empty( $final_ids ) ) {
+        return;
+    }
+
+    $pop_query = new WP_Query( [
+        'post_type'      => $post_types,
+        'posts_per_page' => $count,
+        'post_status'    => 'publish',
+        'post__in'       => $final_ids,
+        'orderby'        => 'post__in',
+    ] );
 
     if ( ! $pop_query->have_posts() ) {
         return;
@@ -293,7 +400,7 @@ function hakajobspro_render_popular_loker_widget( $count = 5 ) {
         <ul class="widget-loker-recent">
           <?php while ( $pop_query->have_posts() ) : $pop_query->the_post();
             $pid     = get_the_ID();
-            $co      = get_post_meta( $pid, '_loker_perusahaan', true );
+            $co      = hakajobspro_get_loker_perusahaan( $pid );
             $lok     = hakajobspro_get_loker_lokasi( $pid );
             $tipe    = hakajobspro_get_loker_tipe( $pid );
             $initial = $co ? strtoupper( mb_substr( $co, 0, 1 ) ) : 'L';
