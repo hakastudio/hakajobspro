@@ -13,10 +13,6 @@
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
-<a class="skip-link sr-only" href="#main-content">
-  <?php esc_html_e( 'Langsung ke konten', 'hakajobspro' ); ?>
-</a>
-
 <!-- HEADER -->
 <header class="site-header" role="banner">
   <div class="container">
@@ -72,25 +68,12 @@
 <nav class="main-nav" id="site-navigation" aria-label="<?php esc_attr_e( 'Menu utama', 'hakajobspro' ); ?>">
   <div class="container">
     <?php
-    wp_nav_menu( [
-        'theme_location' => 'primary',
-        'menu_class'     => 'nav-menu',
-        'container'      => false,
-        'fallback_cb'    => 'hakajobspro_fallback_nav',
-    ] );
+    if ( function_exists( 'hakajobspro_render_header_menu' ) ) {
+        hakajobspro_render_header_menu();
+    }
     ?>
   </div>
 </nav>
-
-<?php
-// Fallback menu jika belum ada menu yang di-assign
-function hakajobspro_fallback_nav() {
-    echo '<ul class="nav-menu">';
-    echo '<li><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Beranda', 'hakajobspro' ) . '</a></li>';
-    echo '<li><a href="' . esc_url( get_post_type_archive_link( 'loker' ) ) . '">' . esc_html__( 'Lowongan Kerja', 'hakajobspro' ) . '</a></li>';
-    echo '</ul>';
-}
-?>
 
 <!-- Breadcrumb (tersembunyi di halaman utama) -->
 <?php if ( ! is_front_page() ) : ?>

@@ -147,6 +147,17 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
         true, 'hakajobspro_header'
     );
 
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_use_direct_header_menu',
+        __( 'Gunakan Daftar Menu Header Langsung di Bawah Ini', 'hakajobspro' ),
+        false, 'hakajobspro_header'
+    );
+
+    hakajobspro_add_textarea_setting( $wp_customize, 'hakajobspro_header_menu_items',
+        __( 'Daftar Menu Header (Format: Nama Menu | URL per baris)', 'hakajobspro' ),
+        function_exists( 'hakajobspro_get_default_header_menu_text' ) ? hakajobspro_get_default_header_menu_text() : '',
+        'hakajobspro_header'
+    );
+
     /* ======================================================================
        SECTION 3: HALAMAN BERANDA
        ====================================================================== */
@@ -417,9 +428,51 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
         'hakajobspro_footer'
     );
 
+    hakajobspro_add_text_setting( $wp_customize, 'hakajobspro_footer_col1_title',
+        __( 'Judul Menu Footer Kolom 1', 'hakajobspro' ),
+        __( 'Kategori Lowongan', 'hakajobspro' ),
+        'hakajobspro_footer'
+    );
+
+    hakajobspro_add_textarea_setting( $wp_customize, 'hakajobspro_footer_col1_links',
+        __( 'Daftar Link Footer Kolom 1 (Nama | URL per baris)', 'hakajobspro' ),
+        function_exists( 'hakajobspro_get_default_footer_col1_text' ) ? hakajobspro_get_default_footer_col1_text() : '',
+        'hakajobspro_footer'
+    );
+
+    hakajobspro_add_text_setting( $wp_customize, 'hakajobspro_footer_col2_title',
+        __( 'Judul Menu Footer Kolom 2', 'hakajobspro' ),
+        __( 'Lokasi Populer', 'hakajobspro' ),
+        'hakajobspro_footer'
+    );
+
+    hakajobspro_add_textarea_setting( $wp_customize, 'hakajobspro_footer_col2_links',
+        __( 'Daftar Link Footer Kolom 2 (Nama | URL per baris)', 'hakajobspro' ),
+        function_exists( 'hakajobspro_get_default_footer_col2_text' ) ? hakajobspro_get_default_footer_col2_text() : '',
+        'hakajobspro_footer'
+    );
+
+    hakajobspro_add_text_setting( $wp_customize, 'hakajobspro_footer_col3_title',
+        __( 'Judul Menu Footer Kolom 3', 'hakajobspro' ),
+        __( 'Informasi & Kontak', 'hakajobspro' ),
+        'hakajobspro_footer'
+    );
+
+    hakajobspro_add_textarea_setting( $wp_customize, 'hakajobspro_footer_col3_links',
+        __( 'Daftar Link Footer Kolom 3 (Nama | URL per baris)', 'hakajobspro' ),
+        function_exists( 'hakajobspro_get_default_footer_col3_text' ) ? hakajobspro_get_default_footer_col3_text() : '',
+        'hakajobspro_footer'
+    );
+
     hakajobspro_add_text_setting( $wp_customize, 'hakajobspro_footer_copyright',
         __( 'Teks Hak Cipta', 'hakajobspro' ),
         sprintf( '&copy; %d %s. Semua hak cipta dilindungi.', date( 'Y' ), get_bloginfo( 'name' ) ),
+        'hakajobspro_footer'
+    );
+
+    hakajobspro_add_textarea_setting( $wp_customize, 'hakajobspro_footer_bottom_links',
+        __( 'Daftar Link Baris Bawah Footer (Nama | URL per baris)', 'hakajobspro' ),
+        function_exists( 'hakajobspro_get_default_footer_bottom_text' ) ? hakajobspro_get_default_footer_bottom_text() : '',
         'hakajobspro_footer'
     );
 

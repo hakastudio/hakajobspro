@@ -38,8 +38,11 @@ function hakajobspro_setup() {
     add_image_size( 'company-logo',  120, 60,  false );
 
     register_nav_menus( [
-        'primary' => __( 'Menu Utama', 'hakajobspro' ),
-        'footer'  => __( 'Menu Footer', 'hakajobspro' ),
+        'primary'      => __( 'Menu Header Utama', 'hakajobspro' ),
+        'footer_col_1' => __( 'Menu Footer Kolom 1 (Kategori / Rubrik)', 'hakajobspro' ),
+        'footer_col_2' => __( 'Menu Footer Kolom 2 (Lokasi / Daerah)', 'hakajobspro' ),
+        'footer_col_3' => __( 'Menu Footer Kolom 3 (Informasi)', 'hakajobspro' ),
+        'footer'       => __( 'Menu Baris Bawah Footer (Sebelah Copyright)', 'hakajobspro' ),
     ] );
 }
 add_action( 'after_setup_theme', 'hakajobspro_setup' );
@@ -226,6 +229,7 @@ add_action( 'wp_head', 'hakajobspro_customizer_css' );
    ========================================================================== */
 
 require HAKAJOBSPRO_DIR . '/inc/custom-post-types.php';
+require HAKAJOBSPRO_DIR . '/inc/menu-manager.php';
 require HAKAJOBSPRO_DIR . '/inc/adsense.php';
 require HAKAJOBSPRO_DIR . '/inc/customizer.php';
 require HAKAJOBSPRO_DIR . '/inc/template-tags.php';

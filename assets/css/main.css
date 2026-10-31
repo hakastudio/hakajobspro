@@ -1452,13 +1452,20 @@ p:last-child { margin-bottom: 0; }
     border-bottom: 1px solid rgba(255,255,255,0.10);
 }
 
-.footer-widgets .container {
+.footer-widgets .container,
+.footer-widgets-grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 28px;
 }
 
-.footer-col h4 {
+.footer-widgets .container:has(.footer-widgets-grid) {
+    display: block;
+}
+
+.footer-col h4,
+.footer-widget-area h4,
+.footer-widget-area .widget-title {
     font-size: 13px;
     font-weight: 700;
     color: white;
@@ -1498,17 +1505,20 @@ p:last-child { margin-bottom: 0; }
     color: white;
 }
 
-.footer-links { display: flex; flex-direction: column; gap: 7px; }
+.footer-links,
+.footer-menu-links { display: flex; flex-direction: column; gap: 7px; }
 
-.footer-links a {
+.footer-links a,
+.footer-menu-links a {
     font-size: 13px;
-    color: rgba(255,255,255,0.70);
+    color: rgba(255,255,255,0.75);
     transition: color var(--transition);
     display: flex;
     align-items: center;
     gap: 6px;
 }
-.footer-links a::before {
+.footer-links a::before,
+.footer-menu-links a::before {
     content: '';
     display: block;
     width: 5px;
@@ -1516,7 +1526,8 @@ p:last-child { margin-bottom: 0; }
     background: var(--color-primary);
     flex-shrink: 0;
 }
-.footer-links a:hover { color: white; }
+.footer-links a:hover,
+.footer-menu-links a:hover { color: white; }
 
 .footer-contact { display: flex; flex-direction: column; gap: 10px; }
 .footer-contact-item {
@@ -1750,7 +1761,8 @@ body.hakajobspro-anticopas select {
     .loker-detail-grid { grid-template-columns: repeat(2, 1fr); }
     .company-stats-grid { grid-template-columns: 1fr; }
 
-    .footer-widgets .container { grid-template-columns: 1fr 1fr; }
+    .footer-widgets .container,
+    .footer-widgets-grid { grid-template-columns: 1fr 1fr; }
 
     .topbar-right { display: none; }
 }
@@ -1760,7 +1772,8 @@ body.hakajobspro-anticopas select {
     .container { padding: 0 14px; }
     .layout { gap: 16px; padding: 16px 0; }
     .loker-grid { grid-template-columns: 1fr; }
-    .footer-widgets .container { grid-template-columns: 1fr; }
+    .footer-widgets .container,
+    .footer-widgets-grid { grid-template-columns: 1fr; }
     .loker-detail-grid { grid-template-columns: 1fr; }
     .single-loker__header { padding: 16px; }
     .single-loker__body { padding: 16px; }
