@@ -30,7 +30,7 @@ get_header();
         $lokasi_terms = get_terms( [ 'taxonomy' => 'loker_lokasi', 'hide_empty' => false ] );
         ?>
         <select name="loker_lokasi" aria-label="<?php esc_attr_e( 'Filter kota', 'hakajobspro' ); ?>">
-          <option value=""><?php esc_html_e( 'Semua Kota / Lokasi', 'hakajobspro' ); ?></option>
+          <option value=""><?php esc_html_e( 'Semua Lokasi', 'hakajobspro' ); ?></option>
           <?php if ( $lokasi_terms && ! is_wp_error( $lokasi_terms ) ) : ?>
             <?php foreach ( $lokasi_terms as $term ) : ?>
               <option value="<?php echo esc_attr( $term->slug ); ?>">
@@ -72,7 +72,9 @@ get_header();
     <?php foreach ( $all_cats as $cat ) : ?>
     <a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" class="cat-chip">
       <?php echo esc_html( $cat->name ); ?>
+      <?php if ( $cat->count > 0 ) : ?>
       <span>(<?php echo (int) $cat->count; ?>)</span>
+      <?php endif; ?>
     </a>
     <?php endforeach; ?>
   </div>

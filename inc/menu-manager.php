@@ -427,3 +427,4 @@ function hakajobspro_render_menus_admin_page() {
     </div>
     <?php
 }
+
