@@ -216,13 +216,17 @@ function hakajobspro_customizer_css() {
         --font-main:         <?php echo $font_main; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
         --container:         <?php echo (int) $container_width; ?>px;
     }
-    html { font-size: <?php echo (int) $font_size; ?>px; overflow-y: auto !important; }
-    body, body.single-loker { overflow-x: hidden; overflow-y: visible !important; background: <?php echo esc_attr( $body_bg ); ?>; border: 0; border-radius: 0; }
+    html { font-size: <?php echo (int) $font_size; ?>px; overflow-x: clip !important; }
+    body, body.single-loker { overflow-x: clip !important; overflow-y: visible !important; background: <?php echo esc_attr( $body_bg ); ?>; border: 0; border-radius: 0; }
     article.single-loker { background: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; overflow: visible !important; }
     .single-loker__body, .entry-content { display: block !important; visibility: visible !important; opacity: 1 !important; }
     .single-loker__body h2, .entry-content h2 { font-size: 22px !important; font-weight: 700 !important; margin-top: 28px !important; margin-bottom: 12px !important; line-height: 1.35 !important; }
     .single-loker__body h3, .entry-content h3 { font-size: 18px !important; font-weight: 700 !important; margin-top: 22px !important; margin-bottom: 10px !important; }
-    .site-header { position: <?php echo $sticky_header ? 'sticky' : 'relative'; ?> !important; top: 0 !important; }
+    .site-header-sticky-wrap { position: -webkit-sticky !important; position: sticky !important; top: 0 !important; z-index: 500 !important; width: 100% !important; }
+    body.admin-bar .site-header-sticky-wrap { top: 32px !important; }
+    @media screen and (max-width: 782px) {
+        body.admin-bar .site-header-sticky-wrap { top: 46px !important; }
+    }
     .main-nav { background: <?php echo esc_attr( $nav_bg ); ?>; }
     .nav-menu > li > a { color: <?php echo esc_attr( $nav_text ); ?>; }
     .nav-menu > li > a:hover,

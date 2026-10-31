@@ -18,6 +18,14 @@
         if (e.key === 'Escape') navMenu?.classList.remove('open');
     });
 
+    // Sticky Header Scroll State
+    const stickyWrap = document.querySelector('.site-header-sticky-wrap');
+    if (stickyWrap) {
+        window.addEventListener('scroll', () => {
+            stickyWrap.classList.toggle('is-scrolled', window.scrollY > 20);
+        }, { passive: true });
+    }
+
     // Scroll to top
     const scrollBtn = document.querySelector('.scroll-top');
     if (scrollBtn) {

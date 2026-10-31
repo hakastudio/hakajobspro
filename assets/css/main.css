@@ -36,7 +36,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 16px; scroll-behavior: smooth; overflow-y: auto; }
+html { font-size: 16px; scroll-behavior: smooth; overflow-x: clip; }
 
 body,
 body.single-loker {
@@ -47,7 +47,7 @@ body.single-loker {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    overflow-x: hidden;
+    overflow-x: clip;
     overflow-y: visible !important;
     border: 0;
     border-radius: 0;
@@ -203,8 +203,28 @@ p:last-child { margin-bottom: 0; }
 .topbar-right a:hover { color: white; }
 
 /* ==========================================================================
-   HEADER
+   HEADER & STICKY WRAPPER
    ========================================================================== */
+
+.site-header-sticky-wrap {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    width: 100%;
+    background: var(--color-header-bg);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+body.admin-bar .site-header-sticky-wrap {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    body.admin-bar .site-header-sticky-wrap {
+        top: 46px;
+    }
+}
 
 .site-header {
     background: var(--color-header-bg);
@@ -212,7 +232,6 @@ p:last-child { margin-bottom: 0; }
     padding: 14px 0;
     position: relative;
     z-index: 200;
-    box-shadow: var(--shadow-sm);
 }
 
 .site-header .container {
