@@ -20,16 +20,16 @@ function hakajobspro_get_default_header_menu_text() {
         'HOME | ' . $home,
         'LOWONGAN KERJA | ' . $loker,
         'DAERAH / LOKASI | ' . $loker,
-        'D3 / S1 | ' . add_query_arg( 'loker_kategori', 'd3-s1', $loker ),
-        'SMA / SMK | ' . add_query_arg( 'loker_kategori', 'sma-smk', $loker ),
+        'D3 / S1 | ' . add_query_arg( 'loker_pendidikan', 'd3-s1', $loker ),
+        'SMA / SMK | ' . add_query_arg( 'loker_pendidikan', 'sma-smk', $loker ),
     ] );
 }
 
 function hakajobspro_get_default_footer_col1_text() {
     $loker = get_post_type_archive_link( 'loker' ) ?: home_url( '/lowongan/' );
     return implode( "\n", [
-        'Loker SMA / SMK | ' . add_query_arg( 'loker_kategori', 'sma-smk', $loker ),
-        'Loker D3 / S1 | ' . add_query_arg( 'loker_kategori', 'd3-s1', $loker ),
+        'Loker SMA / SMK | ' . add_query_arg( 'loker_pendidikan', 'sma-smk', $loker ),
+        'Loker D3 / S1 | ' . add_query_arg( 'loker_pendidikan', 'd3-s1', $loker ),
         'Fresh Graduate | ' . add_query_arg( 'loker_kategori', 'fresh-graduate', $loker ),
         'BUMN & Instansi | ' . add_query_arg( 'loker_kategori', 'bumn-instansi', $loker ),
         'IT & Teknologi | ' . add_query_arg( 'loker_kategori', 'it-teknologi', $loker ),

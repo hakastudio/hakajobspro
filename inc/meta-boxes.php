@@ -37,7 +37,8 @@ function hakajobspro_render_meta_box( $post ) {
     }
     ?>
     <style>
-    .hakajobspro-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;padding:10px 0;}
+    .hakajobspro-meta-info{background:#f0f6fc;border-left:4px solid #1d3557;padding:10px 14px;margin-bottom:12px;border-radius:4px;font-size:12.5px;color:#1e293b;line-height:1.5;}
+    .hakajobspro-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;padding:6px 0 10px;}
     .hakajobspro-meta-grid label{display:block;font-weight:600;margin-bottom:4px;font-size:13px;}
     .hakajobspro-meta-grid input,
     .hakajobspro-meta-grid select,
@@ -45,6 +46,9 @@ function hakajobspro_render_meta_box( $post ) {
     .hakajobspro-meta-grid .full{grid-column:1/-1;}
     .hakajobspro-meta-note{font-size:12px;color:#888;margin-top:3px;}
     </style>
+    <div class="hakajobspro-meta-info">
+        <strong>Panduan Pengisian:</strong> Untuk <strong>Kategori Pekerjaan</strong>, <strong>Pendidikan</strong>, <strong>Tipe Pekerjaan</strong>, dan <strong>Lokasi Kota/Kabupaten</strong> silakan centang langsung pada kotak masing-masing di <strong>Sidebar Kanan</strong> (sudah dipisahkan agar tidak ganda/double).
+    </div>
     <div class="hakajobspro-meta-grid">
     <?php foreach ( $fields as $key => $field ) :
         $value = isset( $values[ $key ] ) ? $values[ $key ] : '';
@@ -112,7 +116,7 @@ function hakajobspro_render_meta_box( $post ) {
 }
 
 /* ==========================================================================
-   DEFINISI FIELD META
+   DEFINISI FIELD META (TANPA DUPLIKASI TIPE PEKERJAAN & PENDIDIKAN)
    ========================================================================== */
 
 function hakajobspro_meta_fields() {
@@ -120,6 +124,7 @@ function hakajobspro_meta_fields() {
         'loker_perusahaan' => [
             'label' => __( 'Nama Perusahaan', 'hakajobspro' ),
             'type'  => 'text',
+            'note'  => 'Contoh: PT Prakarsa Alam Segar',
         ],
         'loker_website' => [
             'label' => __( 'Website Perusahaan', 'hakajobspro' ),
@@ -127,14 +132,14 @@ function hakajobspro_meta_fields() {
             'note'  => 'Contoh: https://perusahaan.com',
         ],
         'loker_lokasi_detail' => [
-            'label' => __( 'Lokasi Detail', 'hakajobspro' ),
+            'label' => __( 'Lokasi Detail / Alamat', 'hakajobspro' ),
             'type'  => 'text',
-            'note'  => 'Contoh: Jl. Sudirman No.1, Jakarta Pusat',
+            'note'  => 'Contoh: Pondok Ungu, Bekasi Utara, Jawa Barat',
         ],
-        'loker_tipe_kerja' => [
-            'label'   => __( 'Tipe Pekerjaan', 'hakajobspro' ),
-            'type'    => 'select',
-            'options' => [ 'Full-time', 'Part-time', 'Freelance', 'Remote', 'Internship', 'Kontrak' ],
+        'loker_pengalaman' => [
+            'label' => __( 'Pengalaman Kerja', 'hakajobspro' ),
+            'type'  => 'text',
+            'note'  => 'Contoh: Fresh Graduate / Minimal 1 tahun',
         ],
         'loker_gaji_min' => [
             'label' => __( 'Gaji Minimum (Rp)', 'hakajobspro' ),
@@ -146,19 +151,10 @@ function hakajobspro_meta_fields() {
             'type'  => 'number',
             'note'  => 'Ketik angka tanpa titik/Rp (Contoh: 4500000 otomatis tampil Rp 4,5 Jt). Kosongkan jika dirahasiakan.',
         ],
-        'loker_pendidikan' => [
-            'label'   => __( 'Pendidikan Minimum', 'hakajobspro' ),
-            'type'    => 'select',
-            'options' => [ 'SMA/SMK', 'D1', 'D2', 'D3', 'S1', 'S2', 'S3', 'Tidak Ditentukan' ],
-        ],
-        'loker_pengalaman' => [
-            'label' => __( 'Pengalaman Kerja', 'hakajobspro' ),
-            'type'  => 'text',
-            'note'  => 'Contoh: Minimal 2 tahun',
-        ],
         'loker_deadline' => [
             'label' => __( 'Batas Pendaftaran', 'hakajobspro' ),
             'type'  => 'date',
+            'note'  => 'Lowongan otomatis ditutup jika melewati tanggal ini.',
         ],
         'loker_link_lamar' => [
             'label' => __( 'Link Melamar / Email', 'hakajobspro' ),
@@ -175,6 +171,7 @@ function hakajobspro_meta_fields() {
             'label'   => __( 'Tandai sebagai Unggulan', 'hakajobspro' ),
             'type'    => 'select',
             'options' => [ 'Ya', 'Tidak' ],
+            'note'    => 'Pilih "Ya" agar tampil di seksi Lowongan Unggulan beranda.',
         ],
     ];
 }
@@ -209,6 +206,17 @@ function hakajobspro_save_meta( $post_id ) {
         }
     }
 
+    // Sinkronkan pilihan taksonomi Pendidikan & Tipe Pekerjaan dari Sidebar Kanan ke post meta
+    $edu_terms = wp_get_object_terms( $post_id, 'loker_pendidikan', [ 'fields' => 'names' ] );
+    if ( ! is_wp_error( $edu_terms ) && ! empty( $edu_terms ) ) {
+        update_post_meta( $post_id, '_loker_pendidikan', implode( ', ', $edu_terms ) );
+    }
+
+    $tipe_terms = wp_get_object_terms( $post_id, 'loker_tipe', [ 'fields' => 'names' ] );
+    if ( ! is_wp_error( $tipe_terms ) && ! empty( $tipe_terms ) ) {
+        update_post_meta( $post_id, '_loker_tipe_kerja', implode( ', ', $tipe_terms ) );
+    }
+
     // Sinkronkan Nama Perusahaan ke taksonomi loker_perusahaan (untuk Arsip Perusahaan)
     $perusahaan = get_post_meta( $post_id, '_loker_perusahaan', true );
     if ( $perusahaan ) {
@@ -235,6 +243,25 @@ function hakajobspro_save_meta( $post_id ) {
     }
 }
 add_action( 'save_post_loker', 'hakajobspro_save_meta' );
+
+/* Sinkronkan otomatis juga saat term Pendidikan atau Tipe Pekerjaan diubah lewat Gutenberg REST API / Quick Edit */
+function hakajobspro_sync_tax_terms_to_meta( $object_id, $terms, $tt_ids, $taxonomy ) {
+    if ( get_post_type( $object_id ) !== 'loker' ) {
+        return;
+    }
+    if ( 'loker_pendidikan' === $taxonomy ) {
+        $names = wp_get_object_terms( $object_id, 'loker_pendidikan', [ 'fields' => 'names' ] );
+        if ( ! is_wp_error( $names ) && ! empty( $names ) ) {
+            update_post_meta( $object_id, '_loker_pendidikan', implode( ', ', $names ) );
+        }
+    } elseif ( 'loker_tipe' === $taxonomy ) {
+        $names = wp_get_object_terms( $object_id, 'loker_tipe', [ 'fields' => 'names' ] );
+        if ( ! is_wp_error( $names ) && ! empty( $names ) ) {
+            update_post_meta( $object_id, '_loker_tipe_kerja', implode( ', ', $names ) );
+        }
+    }
+}
+add_action( 'set_object_terms', 'hakajobspro_sync_tax_terms_to_meta', 10, 4 );
 
 /* ==========================================================================
    KOLOM TAMBAHAN DI ADMIN LIST LOKER

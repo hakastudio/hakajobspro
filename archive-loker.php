@@ -8,16 +8,31 @@ $per_page = absint( get_theme_mod( 'hakajobspro_loker_per_page', 12 ) );
 $paged    = max( 1, get_query_var( 'paged' ) );
 $search   = sanitize_text_field( get_query_var( 's' ) );
 
-// Filter dari URL
-$sel_lokasi   = sanitize_key( $_GET['loker_lokasi']   ?? '' );
-$sel_kategori = sanitize_key( $_GET['loker_kategori'] ?? '' );
-$sel_tipe     = sanitize_key( $_GET['loker_tipe']     ?? '' );
+// Filter dari URL (atau otomatis dari halaman taksonomi yang sedang dibuka)
+$sel_lokasi     = sanitize_key( $_GET['loker_lokasi']     ?? '' );
+$sel_kategori   = sanitize_key( $_GET['loker_kategori']   ?? '' );
+$sel_pendidikan = sanitize_key( $_GET['loker_pendidikan'] ?? '' );
+$sel_tipe       = sanitize_key( $_GET['loker_tipe']       ?? '' );
+
+$queried_term = is_tax( [ 'loker_kategori', 'loker_pendidikan', 'loker_lokasi', 'loker_tipe' ] ) ? get_queried_object() : null;
+if ( $queried_term && ! empty( $queried_term->slug ) ) {
+    if ( 'loker_kategori' === $queried_term->taxonomy && ! $sel_kategori ) {
+        $sel_kategori = $queried_term->slug;
+    } elseif ( 'loker_pendidikan' === $queried_term->taxonomy && ! $sel_pendidikan ) {
+        $sel_pendidikan = $queried_term->slug;
+    } elseif ( 'loker_lokasi' === $queried_term->taxonomy && ! $sel_lokasi ) {
+        $sel_lokasi = $queried_term->slug;
+    } elseif ( 'loker_tipe' === $queried_term->taxonomy && ! $sel_tipe ) {
+        $sel_tipe = $queried_term->slug;
+    }
+}
 
 // Bangun tax_query dari filter
 $tax_query = [ 'relation' => 'AND' ];
-if ( $sel_lokasi )   $tax_query[] = [ 'taxonomy' => 'loker_lokasi',   'field' => 'slug', 'terms' => $sel_lokasi ];
-if ( $sel_kategori ) $tax_query[] = [ 'taxonomy' => 'loker_kategori', 'field' => 'slug', 'terms' => $sel_kategori ];
-if ( $sel_tipe )     $tax_query[] = [ 'taxonomy' => 'loker_tipe',     'field' => 'slug', 'terms' => $sel_tipe ];
+if ( $sel_lokasi )     $tax_query[] = [ 'taxonomy' => 'loker_lokasi',     'field' => 'slug', 'terms' => $sel_lokasi ];
+if ( $sel_kategori )   $tax_query[] = [ 'taxonomy' => 'loker_kategori',   'field' => 'slug', 'terms' => $sel_kategori ];
+if ( $sel_pendidikan ) $tax_query[] = [ 'taxonomy' => 'loker_pendidikan', 'field' => 'slug', 'terms' => $sel_pendidikan ];
+if ( $sel_tipe )       $tax_query[] = [ 'taxonomy' => 'loker_tipe',       'field' => 'slug', 'terms' => $sel_tipe ];
 
 $loker_query = new WP_Query( [
     'post_type'      => 'loker',
@@ -29,6 +44,11 @@ $loker_query = new WP_Query( [
     'orderby'        => 'date',
     'order'          => 'DESC',
 ] );
+
+$archive_heading = get_theme_mod( 'hakajobspro_archive_title', __( 'Semua Lowongan Kerja', 'hakajobspro' ) );
+if ( $queried_term && ! empty( $queried_term->name ) ) {
+    $archive_heading = sprintf( __( 'Lowongan Kerja: %s', 'hakajobspro' ), $queried_term->name );
+}
 ?>
 
 <div class="container">
@@ -39,7 +59,7 @@ $loker_query = new WP_Query( [
 
     <!-- Archive header -->
     <div class="archive-header">
-      <h1><?php echo esc_html( get_theme_mod( 'hakajobspro_archive_title', __( 'Semua Lowongan Kerja', 'hakajobspro' ) ) ); ?></h1>
+      <h1><?php echo esc_html( $archive_heading ); ?></h1>
       <p>
         <?php
         $desc = get_theme_mod( 'hakajobspro_archive_desc', '' );
@@ -66,10 +86,10 @@ $loker_query = new WP_Query( [
              aria-label="<?php esc_attr_e( 'Cari kata kunci', 'hakajobspro' ); ?>">
 
       <?php
-      // Filter Kategori
+      // Filter Kategori Pekerjaan
       $kat_terms = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => false ] );
       ?>
-      <select name="loker_kategori" aria-label="<?php esc_attr_e( 'Pilih Kategori', 'hakajobspro' ); ?>">
+      <select name="loker_kategori" aria-label="<?php esc_attr_e( 'Pilih Kategori Pekerjaan', 'hakajobspro' ); ?>">
         <option value=""><?php esc_html_e( 'Semua Kategori', 'hakajobspro' ); ?></option>
         <?php if ( $kat_terms && ! is_wp_error( $kat_terms ) ) : ?>
           <?php foreach ( $kat_terms as $t ) : ?>
@@ -81,11 +101,26 @@ $loker_query = new WP_Query( [
       </select>
 
       <?php
+      // Filter Pendidikan
+      $edu_terms = get_terms( [ 'taxonomy' => 'loker_pendidikan', 'hide_empty' => false ] );
+      ?>
+      <select name="loker_pendidikan" aria-label="<?php esc_attr_e( 'Pilih Pendidikan', 'hakajobspro' ); ?>">
+        <option value=""><?php esc_html_e( 'Semua Pendidikan', 'hakajobspro' ); ?></option>
+        <?php if ( $edu_terms && ! is_wp_error( $edu_terms ) ) : ?>
+          <?php foreach ( $edu_terms as $t ) : ?>
+            <option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $sel_pendidikan, $t->slug ); ?>>
+              <?php echo esc_html( $t->name ); ?>
+            </option>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </select>
+
+      <?php
       // Filter Lokasi
       $lok_terms = get_terms( [ 'taxonomy' => 'loker_lokasi', 'hide_empty' => false ] );
       ?>
       <select name="loker_lokasi" aria-label="<?php esc_attr_e( 'Pilih Kota', 'hakajobspro' ); ?>">
-        <option value=""><?php esc_html_e( 'Semua Kota / Lokasi', 'hakajobspro' ); ?></option>
+        <option value=""><?php esc_html_e( 'Semua Lokasi', 'hakajobspro' ); ?></option>
         <?php if ( $lok_terms && ! is_wp_error( $lok_terms ) ) : ?>
           <?php foreach ( $lok_terms as $t ) : ?>
             <option value="<?php echo esc_attr( $t->slug ); ?>" <?php selected( $sel_lokasi, $t->slug ); ?>>
@@ -96,7 +131,7 @@ $loker_query = new WP_Query( [
       </select>
 
       <?php
-      // Filter Tipe
+      // Filter Tipe Pekerjaan
       $tipe_terms = get_terms( [ 'taxonomy' => 'loker_tipe', 'hide_empty' => false ] );
       ?>
       <select name="loker_tipe" aria-label="<?php esc_attr_e( 'Tipe Pekerjaan', 'hakajobspro' ); ?>">
@@ -114,7 +149,7 @@ $loker_query = new WP_Query( [
         <?php esc_html_e( 'Terapkan Filter', 'hakajobspro' ); ?>
       </button>
 
-      <?php if ( $sel_lokasi || $sel_kategori || $sel_tipe || $search ) : ?>
+      <?php if ( $sel_lokasi || $sel_kategori || $sel_pendidikan || $sel_tipe || $search ) : ?>
       <a href="<?php echo esc_url( get_post_type_archive_link( 'loker' ) ); ?>" class="btn btn--outline btn--sm">
         <?php esc_html_e( 'Reset', 'hakajobspro' ); ?>
       </a>

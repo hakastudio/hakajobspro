@@ -66,16 +66,16 @@ Kolom **Gaji Minimum (Rp)** dan **Gaji Maksimum (Rp)** wajib diisi menggunakan *
 
 ### 2. Tabel Panduan Lengkap Seluruh Kolom Meta Box (`Detail Lowongan`)
 
-| Nama Kolom di Editor | Meta Key Database | Cara Pengisian & Contoh | Fungsi Otomatis |
+> **Pembaruan v1.1.7 (Anti-Double & Terpisah)**: Kolom **Kategori Pekerjaan**, **Pendidikan**, **Tipe Pekerjaan**, dan **Lokasi Kota** kini telah dipisahkan sepenuhnya menjadi **Kotak Centang (Checkbox)** di **Sidebar Kanan** agar tidak tercampur dan tidak terjadi input ganda (*double*) di Meta Box tengah.
+
+| Nama Kolom di Meta Box Tengah | Meta Key Database | Cara Pengisian & Contoh | Fungsi Otomatis |
 | :--- | :--- | :--- | :--- |
 | **Nama Perusahaan** | `_loker_perusahaan` | Ketik nama resmi perusahaan, contoh: `PT Sumber Alfaria Trijaya Tbk` | Otomatis membuat halaman **Arsip Riwayat Perusahaan** (`/perusahaan/pt-sumber-alfaria-trijaya-tbk/`) dan mengisi `hiringOrganization` di Schema Google Jobs. |
 | **Website Perusahaan** | `_loker_website` | Gunakan `https://`, contoh: `https://alfamart.co.id` *(Kosongkan jika tidak ada)* | Ditampilkan sebagai link situs perusahaan di halaman loker & arsip perusahaan. |
-| **Lokasi Detail** | `_loker_lokasi_detail` | Ketik alamat atau kecamatan/kota spesifik, contoh: `Jl. Soekarno Hatta, Bandar Lampung` | Ditampilkan pada kotak informasi Lokasi di halaman detail lowongan. |
-| **Tipe Pekerjaan** | `_loker_tipe_kerja` | Pilih salah satu: `Full-time`, `Part-time`, `Freelance`, `Remote`, `Internship`, atau `Kontrak` | Menampilkan lencana (*badge*) tipe kerja di kartu loker dan mengisi `employmentType` di Schema Google Jobs. |
+| **Lokasi Detail / Alamat** | `_loker_lokasi_detail` | Ketik alamat atau kecamatan/kota spesifik, contoh: `Pondok Ungu, Bekasi Utara, Jawa Barat` | Ditampilkan pada kotak informasi Lokasi di halaman detail lowongan. |
+| **Pengalaman Kerja** | `_loker_pengalaman` | Contoh: `Fresh Graduate / Minimal 1 Tahun` | Ditampilkan di tabel info detail loker & ringkasan Salin Teks Saluran WhatsApp Admin. |
 | **Gaji Minimum (Rp)** | `_loker_gaji_min` | Ketik angka saja tanpa titik/Rp, contoh: `3200000` | Diformat otomatis menjadi `Rp 3,2 Jt` dan masuk ke Schema `baseSalary`. |
 | **Gaji Maksimum (Rp)** | `_loker_gaji_max` | Ketik angka saja tanpa titik/Rp, contoh: `4500000` | Digabung menjadi rentang `Rp 3,2 Jt - Rp 4,5 Jt`. |
-| **Pendidikan Minimum** | `_loker_pendidikan` | Pilih jenjang: `SMA/SMK`, `D1`, `D2`, `D3`, `S1`, `S2`, `S3`, atau `Tidak Ditentukan` | Ditampilkan di tabel info detail loker & ringkasan Salin Teks Saluran WhatsApp Admin. |
-| **Pengalaman Kerja** | `_loker_pengalaman` | Contoh: `Fresh Graduate` atau `Minimal 1 Tahun` | Ditampilkan di tabel info detail loker & ringkasan Salin Teks Saluran WhatsApp Admin. |
 | **Batas Pendaftaran** | `_loker_deadline` | Pilih tanggal dari kalender (`YYYY-MM-DD`), contoh: `2026-11-30` | Mengaktifkan fitur **Auto-Close Otomatis**. Saat melewati tanggal ini, loker otomatis berstatus **DITUTUP** dan tombol lamar dinonaktifkan. |
 | **Link Melamar / Email** | `_loker_link_lamar` | Isi link formulir (`https://...`), WhatsApp (`https://wa.me/62812...`), atau email (`mailto:hrd@perusahaan.com`) | Menjadi tujuan utama saat pelamar menekan tombol merah **Lamar Sekarang**. |
 | **Cara Melamar** | `_loker_cara_melamar` | Tulis instruksi singkat pengiriman berkas lamaran | Ditampilkan pada bagian bawah artikel di bawah subjudul **Cara Melamar**. |
@@ -83,12 +83,13 @@ Kolom **Gaji Minimum (Rp)** dan **Gaji Maksimum (Rp)** wajib diisi menggunakan *
 
 ---
 
-### 3. Taksonomi di Sidebar Kanan Editor WordPress
-Sebelum menekan tombol **Terbitkan (Publish)**, pastikan juga mencentang:
-1. **Kategori Loker (`loker_kategori`)**: Contoh `SMA / SMK`, `D3 / S1`, `Fresh Graduate`, `BUMN & Instansi`.
-2. **Lokasi / Kota (`loker_lokasi`)**: Contoh `Bandar Lampung`, `Metro`, `Lampung Selatan`, `Jakarta` (agar loker muncul saat dicari lewat dropdown **Semua Lokasi** di Beranda).
-3. **Tipe Pekerjaan (`loker_tipe`)**: Contoh `Full-time`, `Part-time`, `Kontrak`.
-4. **Gambar Unggulan (*Featured Image*)**: Unggah logo perusahaan atau poster lowongan kerja.
+### 3. Empat Kotak Taksonomi Terpisah di Sidebar Kanan Editor WordPress
+Sebelum menekan tombol **Terbitkan (Publish)**, cukup **centang (checkbox)** pada 4 kotak yang sudah dipisahkan di **Sidebar Kanan**:
+1. **Kategori Pekerjaan (`loker_kategori`)**: Khusus bidang profesi, contoh `Administrasi & Perkantoran`, `IT & Teknologi`, `Pemasaran & Sales`, `Keuangan & Perbankan`, `Teknik & Industri`, `Operator & Produksi`, `BUMN & Instansi`.
+2. **Pendidikan (`loker_pendidikan`)**: Khusus jenjang pendidikan (bisa centang lebih dari satu), contoh `SMA / SMK`, `D3`, `S1 / D4`, `D3 / S1`, `SMP`, `S2`, `Semua Jenjang`.
+3. **Tipe Pekerjaan (`loker_tipe`)**: Khusus jenis ikatan kerja, contoh `Full-time`, `Part-time`, `Kontrak`, `Magang`, `Freelance`, `Remote`.
+4. **Lokasi / Daerah (`loker_lokasi`)**: Khusus kota/kabupaten penempatan, contoh `Bandar Lampung`, `Metro`, `Bekasi`, `Jakarta` (agar loker muncul saat dicari lewat dropdown **Semua Lokasi** di Beranda).
+5. **Gambar Unggulan (*Featured Image*)**: Unggah logo perusahaan ukuran persegi **400 x 400 px** (PNG/JPG/WebP).
 
 ---
 

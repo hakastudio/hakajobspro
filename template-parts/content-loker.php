@@ -12,30 +12,15 @@ $expired  = hakajobspro_is_expired( $post_id );
 
 $perusahaan     = get_post_meta( $post_id, '_loker_perusahaan', true );
 $perusahaan_url = hakajobspro_get_perusahaan_url( $post_id );
-$tipe_kerja     = get_post_meta( $post_id, '_loker_tipe_kerja', true );
-$lokasi_det  = get_post_meta( $post_id, '_loker_lokasi_detail', true );
-$gaji_min    = get_post_meta( $post_id, '_loker_gaji_min', true );
-$gaji_max    = get_post_meta( $post_id, '_loker_gaji_max', true );
-$deadline    = get_post_meta( $post_id, '_loker_deadline', true );
+$tipe_kerja     = hakajobspro_get_loker_tipe( $post_id );
+$lokasi_det     = hakajobspro_get_loker_lokasi( $post_id );
+$pendidikan     = hakajobspro_get_loker_pendidikan( $post_id );
+$gaji_min       = get_post_meta( $post_id, '_loker_gaji_min', true );
+$gaji_max       = get_post_meta( $post_id, '_loker_gaji_max', true );
+$deadline       = get_post_meta( $post_id, '_loker_deadline', true );
 
 $show_salary   = get_theme_mod( 'hakajobspro_show_salary', true );
 $show_deadline = get_theme_mod( 'hakajobspro_show_deadline', true );
-
-// Ambil lokasi dari taksonomi jika lokasi detail kosong
-if ( ! $lokasi_det ) {
-    $locs = get_the_terms( $post_id, 'loker_lokasi' );
-    if ( $locs && ! is_wp_error( $locs ) ) {
-        $lokasi_det = $locs[0]->name;
-    }
-}
-
-// Ambil tipe dari taksonomi jika field meta kosong
-if ( ! $tipe_kerja ) {
-    $tipes = get_the_terms( $post_id, 'loker_tipe' );
-    if ( $tipes && ! is_wp_error( $tipes ) ) {
-        $tipe_kerja = $tipes[0]->name;
-    }
-}
 
 // Logo perusahaan (thumbnail)
 $has_thumb = has_post_thumbnail( $post_id );

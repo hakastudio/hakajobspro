@@ -49,23 +49,23 @@ function hakajobspro_register_cpt_loker() {
 add_action( 'init', 'hakajobspro_register_cpt_loker' );
 
 /* ==========================================================================
-   TAKSONOMI: KATEGORI LOKER
+   TAKSONOMI TERPISAH: KATEGORI PEKERJAAN, PENDIDIKAN, TIPE PEKERJAAN, LOKASI
    ========================================================================== */
 
 function hakajobspro_register_taxonomies() {
 
-    // Kategori Lowongan
+    // 1. Kategori Pekerjaan (Bidang Profesi)
     register_taxonomy( 'loker_kategori', 'loker', [
         'labels' => [
-            'name'              => __( 'Kategori Loker', 'hakajobspro' ),
-            'singular_name'     => __( 'Kategori', 'hakajobspro' ),
-            'search_items'      => __( 'Cari Kategori', 'hakajobspro' ),
-            'all_items'         => __( 'Semua Kategori', 'hakajobspro' ),
-            'edit_item'         => __( 'Edit Kategori', 'hakajobspro' ),
-            'update_item'       => __( 'Perbarui Kategori', 'hakajobspro' ),
-            'add_new_item'      => __( 'Tambah Kategori Baru', 'hakajobspro' ),
-            'new_item_name'     => __( 'Nama Kategori Baru', 'hakajobspro' ),
-            'menu_name'         => __( 'Kategori', 'hakajobspro' ),
+            'name'              => __( 'Kategori Pekerjaan', 'hakajobspro' ),
+            'singular_name'     => __( 'Kategori Pekerjaan', 'hakajobspro' ),
+            'search_items'      => __( 'Cari Kategori Pekerjaan', 'hakajobspro' ),
+            'all_items'         => __( 'Semua Kategori Pekerjaan', 'hakajobspro' ),
+            'edit_item'         => __( 'Edit Kategori Pekerjaan', 'hakajobspro' ),
+            'update_item'       => __( 'Perbarui Kategori Pekerjaan', 'hakajobspro' ),
+            'add_new_item'      => __( 'Tambah Kategori Pekerjaan Baru', 'hakajobspro' ),
+            'new_item_name'     => __( 'Nama Kategori Pekerjaan Baru', 'hakajobspro' ),
+            'menu_name'         => __( 'Kategori Pekerjaan', 'hakajobspro' ),
         ],
         'hierarchical'      => true,
         'show_ui'           => true,
@@ -75,35 +75,41 @@ function hakajobspro_register_taxonomies() {
         'show_in_rest'      => true,
     ] );
 
-    // Lokasi
-    register_taxonomy( 'loker_lokasi', 'loker', [
+    // 2. Pendidikan (Jenjang Pendidikan — Terpisah dari Kategori Pekerjaan)
+    register_taxonomy( 'loker_pendidikan', 'loker', [
         'labels' => [
-            'name'          => __( 'Lokasi', 'hakajobspro' ),
-            'singular_name' => __( 'Lokasi', 'hakajobspro' ),
-            'add_new_item'  => __( 'Tambah Lokasi Baru', 'hakajobspro' ),
-            'edit_item'     => __( 'Edit Lokasi', 'hakajobspro' ),
-            'all_items'     => __( 'Semua Lokasi', 'hakajobspro' ),
-            'menu_name'     => __( 'Lokasi', 'hakajobspro' ),
+            'name'              => __( 'Pendidikan', 'hakajobspro' ),
+            'singular_name'     => __( 'Pendidikan', 'hakajobspro' ),
+            'search_items'      => __( 'Cari Jenjang Pendidikan', 'hakajobspro' ),
+            'all_items'         => __( 'Semua Pendidikan', 'hakajobspro' ),
+            'edit_item'         => __( 'Edit Pendidikan', 'hakajobspro' ),
+            'update_item'       => __( 'Perbarui Pendidikan', 'hakajobspro' ),
+            'add_new_item'      => __( 'Tambah Jenjang Pendidikan Baru', 'hakajobspro' ),
+            'new_item_name'     => __( 'Nama Jenjang Pendidikan Baru', 'hakajobspro' ),
+            'menu_name'         => __( 'Pendidikan', 'hakajobspro' ),
         ],
-        'hierarchical'      => false,
+        'hierarchical'      => true,
         'show_ui'           => true,
         'show_admin_column' => true,
         'query_var'         => true,
-        'rewrite'           => [ 'slug' => 'lokasi-loker' ],
+        'rewrite'           => [ 'slug' => 'pendidikan' ],
         'show_in_rest'      => true,
     ] );
 
-    // Tipe Pekerjaan
+    // 3. Tipe Pekerjaan (Checkbox di Sidebar Kanan — Tidak Double dengan Meta Box)
     register_taxonomy( 'loker_tipe', 'loker', [
         'labels' => [
             'name'          => __( 'Tipe Pekerjaan', 'hakajobspro' ),
-            'singular_name' => __( 'Tipe', 'hakajobspro' ),
-            'add_new_item'  => __( 'Tambah Tipe Baru', 'hakajobspro' ),
-            'edit_item'     => __( 'Edit Tipe', 'hakajobspro' ),
-            'all_items'     => __( 'Semua Tipe', 'hakajobspro' ),
+            'singular_name' => __( 'Tipe Pekerjaan', 'hakajobspro' ),
+            'search_items'  => __( 'Cari Tipe Pekerjaan', 'hakajobspro' ),
+            'all_items'     => __( 'Semua Tipe Pekerjaan', 'hakajobspro' ),
+            'edit_item'     => __( 'Edit Tipe Pekerjaan', 'hakajobspro' ),
+            'update_item'   => __( 'Perbarui Tipe Pekerjaan', 'hakajobspro' ),
+            'add_new_item'  => __( 'Tambah Tipe Pekerjaan Baru', 'hakajobspro' ),
+            'new_item_name' => __( 'Nama Tipe Pekerjaan Baru', 'hakajobspro' ),
             'menu_name'     => __( 'Tipe Pekerjaan', 'hakajobspro' ),
         ],
-        'hierarchical'      => false,
+        'hierarchical'      => true,
         'show_ui'           => true,
         'show_admin_column' => true,
         'query_var'         => true,
@@ -111,7 +117,28 @@ function hakajobspro_register_taxonomies() {
         'show_in_rest'      => true,
     ] );
 
-    // Perusahaan (Arsip Perusahaan & Riwayat Lowongan)
+    // 4. Lokasi / Kota (Checkbox di Sidebar Kanan)
+    register_taxonomy( 'loker_lokasi', 'loker', [
+        'labels' => [
+            'name'          => __( 'Lokasi / Daerah', 'hakajobspro' ),
+            'singular_name' => __( 'Lokasi', 'hakajobspro' ),
+            'search_items'  => __( 'Cari Lokasi', 'hakajobspro' ),
+            'all_items'     => __( 'Semua Lokasi', 'hakajobspro' ),
+            'edit_item'     => __( 'Edit Lokasi', 'hakajobspro' ),
+            'update_item'   => __( 'Perbarui Lokasi', 'hakajobspro' ),
+            'add_new_item'  => __( 'Tambah Lokasi Baru', 'hakajobspro' ),
+            'new_item_name' => __( 'Nama Lokasi Baru', 'hakajobspro' ),
+            'menu_name'     => __( 'Lokasi', 'hakajobspro' ),
+        ],
+        'hierarchical'      => true,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'query_var'         => true,
+        'rewrite'           => [ 'slug' => 'lokasi-loker' ],
+        'show_in_rest'      => true,
+    ] );
+
+    // 5. Perusahaan (Arsip Perusahaan & Riwayat Lowongan — Disembunyikan dari Sidebar Kanan agar tidak double dengan input Nama Perusahaan di Meta Box)
     register_taxonomy( 'loker_perusahaan', 'loker', [
         'labels' => [
             'name'          => __( 'Perusahaan', 'hakajobspro' ),
@@ -127,9 +154,10 @@ function hakajobspro_register_taxonomies() {
         'hierarchical'      => false,
         'show_ui'           => true,
         'show_admin_column' => false,
+        'meta_box_cb'       => false,
         'query_var'         => true,
         'rewrite'           => [ 'slug' => 'perusahaan', 'with_front' => false ],
-        'show_in_rest'      => true,
+        'show_in_rest'      => false,
     ] );
 }
 add_action( 'init', 'hakajobspro_register_taxonomies' );
@@ -203,9 +231,90 @@ function hakajobspro_maybe_close_expired_loker() {
 }
 add_action( 'init', 'hakajobspro_maybe_close_expired_loker', 20 );
 
-/* Buat daftar term default otomatis (Lokasi, Kategori, Tipe) jika masih kosong agar dropdown filter langsung muncul */
+/* Buat & pisahkan daftar term default otomatis (Kategori Pekerjaan, Pendidikan, Tipe Pekerjaan, Lokasi) */
 function hakajobspro_seed_default_terms() {
-    if ( ! get_option( 'hakajobspro_default_terms_seeded_v1' ) ) {
+    if ( ! get_option( 'hakajobspro_default_terms_seeded_v2' ) ) {
+
+        // 1. Daftar default Jenjang Pendidikan (loker_pendidikan)
+        $default_pendidikan = [
+            'SMA / SMK',
+            'D3',
+            'S1 / D4',
+            'D3 / S1',
+            'SMP',
+            'S2',
+            'Semua Jenjang',
+        ];
+        foreach ( $default_pendidikan as $edu ) {
+            if ( ! term_exists( $edu, 'loker_pendidikan' ) ) {
+                wp_insert_term( $edu, 'loker_pendidikan' );
+            }
+        }
+
+        // 2. Bersihkan term pendidikan ('SMA / SMK', 'D3 / S1') yang sebelumnya tercampur di loker_kategori
+        $mixed_edu_slugs = [ 'sma-smk', 'd3-s1' ];
+        foreach ( $mixed_edu_slugs as $edu_slug ) {
+            $old_term = get_term_by( 'slug', $edu_slug, 'loker_kategori' );
+            if ( $old_term && ! is_wp_error( $old_term ) ) {
+                // Pindahkan post yang memakai term ini ke taksonomi loker_pendidikan
+                $posts_with_old = get_posts( [
+                    'post_type'      => 'loker',
+                    'posts_per_page' => -1,
+                    'post_status'    => 'any',
+                    'fields'         => 'ids',
+                    'tax_query'      => [
+                        [
+                            'taxonomy' => 'loker_kategori',
+                            'field'    => 'term_id',
+                            'terms'    => $old_term->term_id,
+                        ],
+                    ],
+                ] );
+                if ( ! empty( $posts_with_old ) ) {
+                    foreach ( $posts_with_old as $pid ) {
+                        wp_set_object_terms( $pid, $old_term->name, 'loker_pendidikan', true );
+                    }
+                }
+                wp_delete_term( $old_term->term_id, 'loker_kategori' );
+            }
+        }
+
+        // 3. Daftar default Kategori Pekerjaan murni (loker_kategori)
+        $default_kat = [
+            'Administrasi & Perkantoran',
+            'IT & Teknologi',
+            'Keuangan & Perbankan',
+            'Pemasaran & Sales',
+            'Teknik & Industri',
+            'Logistik & Gudang',
+            'Kesehatan & Medis',
+            'Operator & Produksi',
+            'BUMN & Instansi',
+            'Pendidikan & Pelatihan',
+            'Fresh Graduate',
+        ];
+        foreach ( $default_kat as $kat ) {
+            if ( ! term_exists( $kat, 'loker_kategori' ) ) {
+                wp_insert_term( $kat, 'loker_kategori' );
+            }
+        }
+
+        // 4. Daftar default Tipe Pekerjaan (loker_tipe)
+        $default_tipe = [
+            'Full-time',
+            'Part-time',
+            'Kontrak',
+            'Magang',
+            'Freelance',
+            'Remote',
+        ];
+        foreach ( $default_tipe as $tp ) {
+            if ( ! term_exists( $tp, 'loker_tipe' ) ) {
+                wp_insert_term( $tp, 'loker_tipe' );
+            }
+        }
+
+        // 5. Daftar default Lokasi / Kota (loker_lokasi)
         $existing_lokasi = get_terms( [ 'taxonomy' => 'loker_lokasi', 'hide_empty' => false, 'fields' => 'ids' ] );
         if ( empty( $existing_lokasi ) || is_wp_error( $existing_lokasi ) ) {
             $default_lokasi = [
@@ -223,36 +332,52 @@ function hakajobspro_seed_default_terms() {
             }
         }
 
-        $existing_kat = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => false, 'fields' => 'ids' ] );
-        if ( empty( $existing_kat ) || is_wp_error( $existing_kat ) ) {
-            $default_kat = [
-                'SMA / SMK', 'D3 / S1', 'Fresh Graduate', 'BUMN & Instansi',
-                'Administrasi & Perkantoran', 'IT & Teknologi', 'Keuangan & Perbankan',
-                'Pemasaran & Sales', 'Teknik & Industri', 'Kesehatan & Medis',
-            ];
-            foreach ( $default_kat as $kat ) {
-                if ( ! term_exists( $kat, 'loker_kategori' ) ) {
-                    wp_insert_term( $kat, 'loker_kategori' );
-                }
-            }
-        }
+        // 6. Sinkronkan post loker lama yang sudah punya meta _loker_pendidikan & _loker_tipe_kerja ke taksonomi baru
+        $all_loker_ids = get_posts( [
+            'post_type'      => 'loker',
+            'posts_per_page' => 200,
+            'post_status'    => 'any',
+            'fields'         => 'ids',
+        ] );
+        if ( ! empty( $all_loker_ids ) ) {
+            foreach ( $all_loker_ids as $pid ) {
+                $meta_edu  = get_post_meta( $pid, '_loker_pendidikan', true );
+                $meta_tipe = get_post_meta( $pid, '_loker_tipe_kerja', true );
 
-        $existing_tipe = get_terms( [ 'taxonomy' => 'loker_tipe', 'hide_empty' => false, 'fields' => 'ids' ] );
-        if ( empty( $existing_tipe ) || is_wp_error( $existing_tipe ) ) {
-            $default_tipe = [
-                'Full-time', 'Part-time', 'Kontrak', 'Magang', 'Freelance', 'Remote',
-            ];
-            foreach ( $default_tipe as $tp ) {
-                if ( ! term_exists( $tp, 'loker_tipe' ) ) {
-                    wp_insert_term( $tp, 'loker_tipe' );
+                if ( $meta_edu ) {
+                    $edu_label = ( $meta_edu === 'SMA/SMK' ) ? 'SMA / SMK' : $meta_edu;
+                    $cur_edu   = wp_get_object_terms( $pid, 'loker_pendidikan', [ 'fields' => 'ids' ] );
+                    if ( empty( $cur_edu ) || is_wp_error( $cur_edu ) ) {
+                        wp_set_object_terms( $pid, $edu_label, 'loker_pendidikan', true );
+                    }
+                }
+                if ( $meta_tipe ) {
+                    $cur_tipe = wp_get_object_terms( $pid, 'loker_tipe', [ 'fields' => 'ids' ] );
+                    if ( empty( $cur_tipe ) || is_wp_error( $cur_tipe ) ) {
+                        wp_set_object_terms( $pid, $meta_tipe, 'loker_tipe', true );
+                    }
                 }
             }
         }
 
         update_option( 'hakajobspro_default_terms_seeded_v1', 1 );
+        update_option( 'hakajobspro_default_terms_seeded_v2', 1 );
+        flush_rewrite_rules();
     }
 }
 add_action( 'init', 'hakajobspro_seed_default_terms', 15 );
+
+/* Gunakan template archive-loker.php untuk halaman arsip taksonomi Kategori, Pendidikan, Lokasi, & Tipe */
+function hakajobspro_taxonomy_template_include( $template ) {
+    if ( is_tax( [ 'loker_kategori', 'loker_pendidikan', 'loker_lokasi', 'loker_tipe' ] ) ) {
+        $archive_loker = locate_template( 'archive-loker.php' );
+        if ( $archive_loker ) {
+            return $archive_loker;
+        }
+    }
+    return $template;
+}
+add_filter( 'template_include', 'hakajobspro_taxonomy_template_include' );
 
 /* Flush rewrite rules sekali saat tema aktif */
 function hakajobspro_flush_rewrite_rules() {

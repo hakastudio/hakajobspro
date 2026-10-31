@@ -93,6 +93,41 @@ function hakajobspro_get_perusahaan_url( $post_id = null ) {
 }
 
 /* ==========================================================================
+   HELPER: AMBIL PENDIDIKAN, TIPE PEKERJAAN, & LOKASI (TAKSONOMI + FALLBACK META)
+   ========================================================================== */
+
+function hakajobspro_get_loker_pendidikan( $post_id = null ) {
+    $post_id = $post_id ?: get_the_ID();
+    $terms   = get_the_terms( $post_id, 'loker_pendidikan' );
+    if ( $terms && ! is_wp_error( $terms ) ) {
+        return implode( ', ', wp_list_pluck( $terms, 'name' ) );
+    }
+    return (string) get_post_meta( $post_id, '_loker_pendidikan', true );
+}
+
+function hakajobspro_get_loker_tipe( $post_id = null ) {
+    $post_id = $post_id ?: get_the_ID();
+    $terms   = get_the_terms( $post_id, 'loker_tipe' );
+    if ( $terms && ! is_wp_error( $terms ) ) {
+        return implode( ', ', wp_list_pluck( $terms, 'name' ) );
+    }
+    return (string) get_post_meta( $post_id, '_loker_tipe_kerja', true );
+}
+
+function hakajobspro_get_loker_lokasi( $post_id = null ) {
+    $post_id = $post_id ?: get_the_ID();
+    $detail  = get_post_meta( $post_id, '_loker_lokasi_detail', true );
+    if ( $detail ) {
+        return $detail;
+    }
+    $terms = get_the_terms( $post_id, 'loker_lokasi' );
+    if ( $terms && ! is_wp_error( $terms ) ) {
+        return implode( ', ', wp_list_pluck( $terms, 'name' ) );
+    }
+    return '';
+}
+
+/* ==========================================================================
    RENDER BADGE LOKER
    ========================================================================== */
 
@@ -186,7 +221,7 @@ function hakajobspro_breadcrumb() {
         echo '<li aria-current="page">' . esc_html( get_the_title() ) . '</li>';
     } elseif ( is_tax( 'loker_perusahaan' ) ) {
         echo '<li aria-current="page">' . sprintf( esc_html__( 'Arsip Perusahaan: %s', 'hakajobspro' ), esc_html( single_term_title( '', false ) ) ) . '</li>';
-    } elseif ( is_post_type_archive( 'loker' ) || is_tax( [ 'loker_kategori', 'loker_lokasi', 'loker_tipe' ] ) ) {
+    } elseif ( is_post_type_archive( 'loker' ) || is_tax( [ 'loker_kategori', 'loker_pendidikan', 'loker_lokasi', 'loker_tipe' ] ) ) {
         echo '<li aria-current="page">' . esc_html( get_the_archive_title() ) . '</li>';
     } elseif ( is_page() ) {
         echo '<li aria-current="page">' . esc_html( get_the_title() ) . '</li>';
@@ -259,13 +294,9 @@ function hakajobspro_render_popular_loker_widget( $count = 5 ) {
           <?php while ( $pop_query->have_posts() ) : $pop_query->the_post();
             $pid     = get_the_ID();
             $co      = get_post_meta( $pid, '_loker_perusahaan', true );
-            $lok     = get_post_meta( $pid, '_loker_lokasi_detail', true );
-            $tipe    = get_post_meta( $pid, '_loker_tipe_kerja', true );
+            $lok     = hakajobspro_get_loker_lokasi( $pid );
+            $tipe    = hakajobspro_get_loker_tipe( $pid );
             $initial = $co ? strtoupper( mb_substr( $co, 0, 1 ) ) : 'L';
-            if ( ! $lok ) {
-                $locs = get_the_terms( $pid, 'loker_lokasi' );
-                if ( $locs && ! is_wp_error( $locs ) ) $lok = $locs[0]->name;
-            }
           ?>
           <li>
             <?php if ( has_post_thumbnail( $pid ) ) : ?>
@@ -320,19 +351,12 @@ function hakajobspro_output_jobposting_schema() {
 
     $perusahaan = get_post_meta( $post_id, '_loker_perusahaan', true ) ?: get_bloginfo( 'name' );
     $website    = get_post_meta( $post_id, '_loker_website', true ) ?: home_url();
-    $lokasi     = get_post_meta( $post_id, '_loker_lokasi_detail', true );
-    $tipe       = get_post_meta( $post_id, '_loker_tipe_kerja', true );
+    $lokasi     = hakajobspro_get_loker_lokasi( $post_id );
+    $tipe       = hakajobspro_get_loker_tipe( $post_id );
     $gaji_min   = absint( get_post_meta( $post_id, '_loker_gaji_min', true ) );
     $gaji_max   = absint( get_post_meta( $post_id, '_loker_gaji_max', true ) );
     $deadline   = get_post_meta( $post_id, '_loker_deadline', true );
     $link_lamar = get_post_meta( $post_id, '_loker_link_lamar', true );
-
-    if ( ! $lokasi ) {
-        $locs = get_the_terms( $post_id, 'loker_lokasi' );
-        if ( $locs && ! is_wp_error( $locs ) ) {
-            $lokasi = $locs[0]->name;
-        }
-    }
 
     // Petakan tipe pekerjaan ke enum resmi Google JobPosting
     $emp_map = [
@@ -423,23 +447,16 @@ function hakajobspro_get_wa_broadcast_text( $post_id = null ) {
     $post_id    = $post_id ?: get_the_ID();
     $title      = get_the_title( $post_id );
     $perusahaan = get_post_meta( $post_id, '_loker_perusahaan', true );
-    $lokasi     = get_post_meta( $post_id, '_loker_lokasi_detail', true );
-    $tipe       = get_post_meta( $post_id, '_loker_tipe_kerja', true );
+    $lokasi     = hakajobspro_get_loker_lokasi( $post_id );
+    $tipe       = hakajobspro_get_loker_tipe( $post_id );
     $gaji_min   = get_post_meta( $post_id, '_loker_gaji_min', true );
     $gaji_max   = get_post_meta( $post_id, '_loker_gaji_max', true );
-    $pendidikan = get_post_meta( $post_id, '_loker_pendidikan', true );
+    $pendidikan = hakajobspro_get_loker_pendidikan( $post_id );
     $pengalaman = get_post_meta( $post_id, '_loker_pengalaman', true );
     $deadline   = get_post_meta( $post_id, '_loker_deadline', true );
     $gaji_str   = hakajobspro_format_gaji( $gaji_min, $gaji_max );
     $permalink  = get_permalink( $post_id );
     $channel    = get_theme_mod( 'hakajobspro_wa_channel_url', 'https://whatsapp.com/channel/' );
-
-    if ( ! $lokasi ) {
-        $locs = get_the_terms( $post_id, 'loker_lokasi' );
-        if ( $locs && ! is_wp_error( $locs ) ) {
-            $lokasi = $locs[0]->name;
-        }
-    }
 
     $lines   = [];
     $lines[] = '*INFO LOWONGAN KERJA TERBARU*';
