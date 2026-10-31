@@ -27,43 +27,23 @@ if ( $queried_term && ! empty( $queried_term->slug ) ) {
     }
 }
 
-// Bangun tax_query dari filter (mendukung taksonomi loker_* maupun kategori/tag Pos lama)
+// Bangun tax_query murni untuk taksonomi Lowongan Kerja (CPT 'loker')
 $tax_query = [ 'relation' => 'AND' ];
 if ( $sel_lokasi ) {
-    $tax_query[] = [
-        'relation' => 'OR',
-        [ 'taxonomy' => 'loker_lokasi', 'field' => 'slug', 'terms' => $sel_lokasi ],
-        [ 'taxonomy' => 'category',     'field' => 'slug', 'terms' => $sel_lokasi ],
-        [ 'taxonomy' => 'post_tag',     'field' => 'slug', 'terms' => $sel_lokasi ],
-    ];
+    $tax_query[] = [ 'taxonomy' => 'loker_lokasi', 'field' => 'slug', 'terms' => $sel_lokasi ];
 }
 if ( $sel_kategori ) {
-    $tax_query[] = [
-        'relation' => 'OR',
-        [ 'taxonomy' => 'loker_kategori', 'field' => 'slug', 'terms' => $sel_kategori ],
-        [ 'taxonomy' => 'category',       'field' => 'slug', 'terms' => $sel_kategori ],
-        [ 'taxonomy' => 'post_tag',       'field' => 'slug', 'terms' => $sel_kategori ],
-    ];
+    $tax_query[] = [ 'taxonomy' => 'loker_kategori', 'field' => 'slug', 'terms' => $sel_kategori ];
 }
 if ( $sel_pendidikan ) {
-    $tax_query[] = [
-        'relation' => 'OR',
-        [ 'taxonomy' => 'loker_pendidikan', 'field' => 'slug', 'terms' => $sel_pendidikan ],
-        [ 'taxonomy' => 'category',         'field' => 'slug', 'terms' => $sel_pendidikan ],
-        [ 'taxonomy' => 'post_tag',         'field' => 'slug', 'terms' => $sel_pendidikan ],
-    ];
+    $tax_query[] = [ 'taxonomy' => 'loker_pendidikan', 'field' => 'slug', 'terms' => $sel_pendidikan ];
 }
 if ( $sel_tipe ) {
-    $tax_query[] = [
-        'relation' => 'OR',
-        [ 'taxonomy' => 'loker_tipe', 'field' => 'slug', 'terms' => $sel_tipe ],
-        [ 'taxonomy' => 'category',   'field' => 'slug', 'terms' => $sel_tipe ],
-        [ 'taxonomy' => 'post_tag',   'field' => 'slug', 'terms' => $sel_tipe ],
-    ];
+    $tax_query[] = [ 'taxonomy' => 'loker_tipe', 'field' => 'slug', 'terms' => $sel_tipe ];
 }
 
 $loker_query = new WP_Query( [
-    'post_type'           => hakajobspro_get_loker_post_types(),
+    'post_type'           => 'loker',
     'posts_per_page'      => $per_page,
     'paged'               => $paged,
     'post_status'         => 'publish',

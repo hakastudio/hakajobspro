@@ -118,7 +118,7 @@ get_header();
       <?php
       $latest_count = absint( get_theme_mod( 'hakajobspro_latest_count', 10 ) );
       $latest_query = new WP_Query( [
-          'post_type'           => hakajobspro_get_loker_post_types(),
+          'post_type'           => 'loker',
           'posts_per_page'      => $latest_count,
           'post_status'         => 'publish',
           'ignore_sticky_posts' => true,
@@ -166,12 +166,10 @@ get_header();
   <!-- SEKSI KHUSUS TIPS KARIER (POS ARTIKEL WP — TERPISAH DARI LOKER) -->
   <?php
   if ( get_theme_mod( 'hakajobspro_show_tips_home', true ) ) :
-    $shown_ids  = ! empty( $latest_query->posts ) ? wp_list_pluck( $latest_query->posts, 'ID' ) : [];
     $tips_query = new WP_Query( [
         'post_type'           => 'post',
         'posts_per_page'      => 3,
         'post_status'         => 'publish',
-        'post__not_in'        => $shown_ids,
         'ignore_sticky_posts' => true,
     ] );
     if ( $tips_query->have_posts() ) :

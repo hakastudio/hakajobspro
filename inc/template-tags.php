@@ -69,13 +69,10 @@ function hakajobspro_is_expired( $post_id = null ) {
    ========================================================================== */
 
 /* ==========================================================================
-   HELPER: DAFTAR POST TYPE LOWONGAN (GABUNGKAN CPT 'loker' & POS STANDAR 'post')
+   HELPER: DAFTAR POST TYPE LOWONGAN (MURNI CPT 'loker', TERPISAH DARI POS WP)
    ========================================================================== */
 
 function hakajobspro_get_loker_post_types() {
-    if ( get_theme_mod( 'hakajobspro_include_posts_in_loker', true ) ) {
-        return [ 'loker', 'post' ];
-    }
     return [ 'loker' ];
 }
 
@@ -336,7 +333,7 @@ function hakajobspro_has_sidebar() {
    ========================================================================== */
 
 function hakajobspro_track_loker_views() {
-    if ( ! is_singular( [ 'loker', 'post' ] ) || is_admin() ) {
+    if ( ! is_singular( 'loker' ) || is_admin() ) {
         return;
     }
     $post_id = get_queried_object_id();
@@ -347,12 +344,11 @@ function hakajobspro_track_loker_views() {
 add_action( 'wp', 'hakajobspro_track_loker_views' );
 
 function hakajobspro_render_popular_loker_widget( $count = 5 ) {
-    $exclude_id = is_singular( [ 'loker', 'post' ] ) ? [ get_the_ID() ] : [];
-    $post_types = hakajobspro_get_loker_post_types();
+    $exclude_id = is_singular( 'loker' ) ? [ get_the_ID() ] : [];
 
-    // 1. Ambil ID loker yang sudah memiliki jumlah tayangan (_loker_views) tertinggi
+    // 1. Ambil ID loker (CPT 'loker') yang memiliki jumlah tayangan (_loker_views) tertinggi
     $viewed_ids = get_posts( [
-        'post_type'      => $post_types,
+        'post_type'      => 'loker',
         'posts_per_page' => $count,
         'post_status'    => 'publish',
         'post__not_in'   => $exclude_id,
@@ -361,11 +357,11 @@ function hakajobspro_render_popular_loker_widget( $count = 5 ) {
         'fields'         => 'ids',
     ] );
 
-    // 2. Jika jumlah yang sudah punya _loker_views kurang dari $count, genapkan dengan loker terbaru
+    // 2. Jika jumlah yang punya _loker_views kurang dari $count, genapkan dengan loker terbaru
     if ( count( $viewed_ids ) < $count ) {
         $needed     = $count - count( $viewed_ids );
         $recent_ids = get_posts( [
-            'post_type'      => $post_types,
+            'post_type'      => 'loker',
             'posts_per_page' => $needed,
             'post_status'    => 'publish',
             'post__not_in'   => array_merge( $exclude_id, $viewed_ids ),
@@ -378,12 +374,17 @@ function hakajobspro_render_popular_loker_widget( $count = 5 ) {
         $final_ids = $viewed_ids;
     }
 
+    // 3. Jika baru ada 1 loker (yang sedang dibuka), tetap tampilkan agar widget tidak hilang
+    if ( empty( $final_ids ) && ! empty( $exclude_id ) ) {
+        $final_ids = $exclude_id;
+    }
+
     if ( empty( $final_ids ) ) {
         return;
     }
 
     $pop_query = new WP_Query( [
-        'post_type'      => $post_types,
+        'post_type'      => 'loker',
         'posts_per_page' => $count,
         'post_status'    => 'publish',
         'post__in'       => $final_ids,

@@ -232,13 +232,12 @@ while ( have_posts() ) : the_post();
 
   <!-- LOKER TERKAIT -->
   <?php
-  $post_types = hakajobspro_get_loker_post_types();
-  $kat_ids    = wp_list_pluck( get_the_terms( $post_id, 'loker_kategori' ) ?: [], 'term_id' );
-  $rel_ids    = [];
+  $kat_ids = wp_list_pluck( get_the_terms( $post_id, 'loker_kategori' ) ?: [], 'term_id' );
+  $rel_ids = [];
 
   if ( ! empty( $kat_ids ) ) {
       $rel_ids = get_posts( [
-          'post_type'      => $post_types,
+          'post_type'      => 'loker',
           'posts_per_page' => 4,
           'post_status'    => 'publish',
           'post__not_in'   => [ $post_id ],
@@ -251,7 +250,7 @@ while ( have_posts() ) : the_post();
 
   if ( count( $rel_ids ) < 4 ) {
       $more_ids = get_posts( [
-          'post_type'      => $post_types,
+          'post_type'      => 'loker',
           'posts_per_page' => 4 - count( $rel_ids ),
           'post_status'    => 'publish',
           'post__not_in'   => array_merge( [ $post_id ], $rel_ids ),
@@ -263,7 +262,7 @@ while ( have_posts() ) : the_post();
   }
 
   $related = ! empty( $rel_ids ) ? new WP_Query( [
-      'post_type'      => $post_types,
+      'post_type'      => 'loker',
       'posts_per_page' => 4,
       'post_status'    => 'publish',
       'post__in'       => $rel_ids,
