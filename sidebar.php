@@ -1,12 +1,12 @@
 <?php
 /**
- * sidebar.php — Sidebar kanan (otomatis menampilkan Loker Populer & Kategori Loker)
+ * sidebar.php — Sidebar kanan (Slot Iklan Atas, Loker Populer, Kategori Loker, Widget WP, & Slot Iklan Bawah Sticky)
  */
 ?>
 <aside class="sidebar" role="complementary" aria-label="<?php esc_attr_e( 'Sidebar', 'hakajobspro' ); ?>">
 
   <?php
-  // SLOT IKLAN 6: SIDEBAR KANAN
+  // SLOT IKLAN 6: SIDEBAR KANAN ATAS
   if ( function_exists( 'hakajobspro_render_ad_slot' ) ) {
       hakajobspro_render_ad_slot( 'sidebar' );
   }
@@ -38,9 +38,14 @@
   <?php endif; ?>
 
   <?php
-  // Widget tambahan dari WP Admin > Tampilan > Widget
+  // Widget tambahan dari WP Admin > Tampilan > Widget (termasuk Widget "Hakajobspro: Slot Iklan AdSense")
   if ( is_active_sidebar( 'sidebar-1' ) ) {
       dynamic_sidebar( 'sidebar-1' );
+  }
+
+  // SLOT IKLAN 7: SIDEBAR KANAN BAWAH (STICKY)
+  if ( function_exists( 'hakajobspro_render_ad_slot' ) ) {
+      hakajobspro_render_ad_slot( 'sidebar_bottom' );
   }
   ?>
 

@@ -1766,6 +1766,7 @@ body.hakajobspro-anticopas select {
 .hjp-ad-slot--single_bottom { margin: 0 24px 20px; width: auto; }
 .hjp-ad-slot--sidebar { margin: 0 0 20px; }
 .hjp-ad-slot--footer { margin: 20px 0 0; }
+.widget-ad-slot--sticky { position: sticky; top: 20px; }
 
 .hjp-ad-slot__label {
     display: block;

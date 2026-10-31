@@ -521,23 +521,33 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
         '', 'hakajobspro_adsense'
     );
 
-    // Slot 6: Sidebar Kanan
+    // Slot 6: Sidebar Kanan Atas
     hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ad_sidebar_enable',
-        __( 'ON/OFF Slot 6: Sidebar Kanan', 'hakajobspro' ),
+        __( 'ON/OFF Slot 6: Sidebar Kanan Atas', 'hakajobspro' ),
         false, 'hakajobspro_adsense'
     );
     hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ad_sidebar_code',
-        __( 'Kode Iklan Slot 6 (Sidebar Kanan)', 'hakajobspro' ),
+        __( 'Kode Iklan Slot 6 (Sidebar Kanan Atas)', 'hakajobspro' ),
         '', 'hakajobspro_adsense'
     );
 
-    // Slot 7: Atas Footer
+    // Slot 7: Sidebar Kanan Bawah (Sticky)
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ad_sidebar_bottom_enable',
+        __( 'ON/OFF Slot 7: Sidebar Kanan Bawah (Sticky)', 'hakajobspro' ),
+        false, 'hakajobspro_adsense'
+    );
+    hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ad_sidebar_bottom_code',
+        __( 'Kode Iklan Slot 7 (Sidebar Kanan Bawah Sticky)', 'hakajobspro' ),
+        '', 'hakajobspro_adsense'
+    );
+
+    // Slot 8: Atas Footer
     hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_ad_footer_enable',
-        __( 'ON/OFF Slot 7: Atas Footer', 'hakajobspro' ),
+        __( 'ON/OFF Slot 8: Atas Footer', 'hakajobspro' ),
         false, 'hakajobspro_adsense'
     );
     hakajobspro_add_ad_code_setting( $wp_customize, 'hakajobspro_ad_footer_code',
-        __( 'Kode Iklan Slot 7 (Atas Footer)', 'hakajobspro' ),
+        __( 'Kode Iklan Slot 8 (Atas Footer)', 'hakajobspro' ),
         '', 'hakajobspro_adsense'
     );
 }

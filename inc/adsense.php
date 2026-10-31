@@ -54,14 +54,21 @@ function hakajobspro_get_ad_slots_config() {
             'size_hint'   => 'Responsive Display / 336x280 / 300x250',
         ],
         'sidebar' => [
-            'title'       => __( 'Slot 6: Sidebar Kanan', 'hakajobspro' ),
-            'desc'        => __( 'Tampil di bagian atas Sidebar Kanan (di atas widget Loker Populer).', 'hakajobspro' ),
+            'title'       => __( 'Slot 6: Sidebar Kanan Atas', 'hakajobspro' ),
+            'desc'        => __( 'Tampil di kotak paling atas Sidebar Kanan (di atas widget Loker Populer).', 'hakajobspro' ),
             'enable_mod'  => 'hakajobspro_ad_sidebar_enable',
             'code_mod'    => 'hakajobspro_ad_sidebar_code',
-            'size_hint'   => '300x250 / 300x600 / Responsive Vertical',
+            'size_hint'   => '300x250 Medium Rectangle / Responsive',
+        ],
+        'sidebar_bottom' => [
+            'title'       => __( 'Slot 7: Sidebar Kanan Bawah (Sticky)', 'hakajobspro' ),
+            'desc'        => __( 'Tampil di bagian bawah Sidebar Kanan (di bawah Kategori Lowongan) dan mengikuti scroll layar.', 'hakajobspro' ),
+            'enable_mod'  => 'hakajobspro_ad_sidebar_bottom_enable',
+            'code_mod'    => 'hakajobspro_ad_sidebar_bottom_code',
+            'size_hint'   => '300x600 Large Skyscraper / 300x250',
         ],
         'footer' => [
-            'title'       => __( 'Slot 7: Atas Footer', 'hakajobspro' ),
+            'title'       => __( 'Slot 8: Atas Footer', 'hakajobspro' ),
             'desc'        => __( 'Tampil di bagian bawah halaman tepat sebelum area Footer.', 'hakajobspro' ),
             'enable_mod'  => 'hakajobspro_ad_footer_enable',
             'code_mod'    => 'hakajobspro_ad_footer_code',
@@ -122,13 +129,29 @@ function hakajobspro_get_ad_slot_html( $slot_key ) {
     $code              = trim( (string) get_theme_mod( $slot['code_mod'], '' ) );
     $show_label        = (bool) get_theme_mod( 'hakajobspro_ads_show_label', true );
     $admin_placeholder = (bool) get_theme_mod( 'hakajobspro_ads_admin_placeholder', true );
+    $is_sidebar_slot   = in_array( $slot_key, [ 'sidebar', 'sidebar_bottom' ], true );
+    $sticky_class      = ( 'sidebar_bottom' === $slot_key ) ? ' widget-ad-slot--sticky' : '';
 
     // Jika kode kosong dan fitur pratinjau placeholder admin aktif (hanya terlihat oleh Admin)
     if ( empty( $code ) ) {
         if ( $admin_placeholder && current_user_can( 'manage_options' ) ) {
             $edit_url = admin_url( 'themes.php?page=hakajobspro-adsense' );
             ob_start();
+            if ( $is_sidebar_slot ) :
             ?>
+            <div class="widget widget-ad-slot<?php echo esc_attr( $sticky_class ); ?>" role="region" aria-label="<?php esc_attr_e( 'Slot Iklan Sidebar', 'hakajobspro' ); ?>">
+                <?php if ( $show_label ) : ?>
+                    <h3 class="widget-title"><?php esc_html_e( 'Iklan Sponsor', 'hakajobspro' ); ?></h3>
+                <?php endif; ?>
+                <div class="widget-content">
+                    <div class="hjp-ad-placeholder-box">
+                        <strong><?php echo esc_html( $slot['title'] ); ?> (AKTIF)</strong>
+                        <span><?php echo esc_html( $slot['size_hint'] ); ?> &mdash; <?php esc_html_e( 'Kode AdSense belum diisi (Khusus Admin).', 'hakajobspro' ); ?></span>
+                        <a href="<?php echo esc_url( $edit_url ); ?>"><?php esc_html_e( 'Isi Kode Iklan di Pengaturan WP', 'hakajobspro' ); ?> &rarr;</a>
+                    </div>
+                </div>
+            </div>
+            <?php else : ?>
             <div class="hjp-ad-slot hjp-ad-slot--<?php echo esc_attr( $slot_key ); ?> hjp-ad-slot--placeholder" role="region" aria-label="<?php esc_attr_e( 'Slot Iklan', 'hakajobspro' ); ?>">
                 <?php if ( $show_label ) : ?>
                     <span class="hjp-ad-slot__label"><?php esc_html_e( 'IKLAN / ADVERTISEMENT', 'hakajobspro' ); ?></span>
@@ -140,13 +163,26 @@ function hakajobspro_get_ad_slot_html( $slot_key ) {
                 </div>
             </div>
             <?php
+            endif;
             return ob_get_clean();
         }
         return '';
     }
 
     ob_start();
+    if ( $is_sidebar_slot ) :
     ?>
+    <div class="widget widget-ad-slot<?php echo esc_attr( $sticky_class ); ?>" role="region" aria-label="<?php esc_attr_e( 'Iklan Sponsor Sidebar', 'hakajobspro' ); ?>">
+        <?php if ( $show_label ) : ?>
+            <h3 class="widget-title"><?php esc_html_e( 'Iklan Sponsor', 'hakajobspro' ); ?></h3>
+        <?php endif; ?>
+        <div class="widget-content">
+            <div class="hjp-ad-slot__inner">
+                <?php echo do_shortcode( $code ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            </div>
+        </div>
+    </div>
+    <?php else : ?>
     <div class="hjp-ad-slot hjp-ad-slot--<?php echo esc_attr( $slot_key ); ?>" role="region" aria-label="<?php esc_attr_e( 'Iklan Sponsor', 'hakajobspro' ); ?>">
         <?php if ( $show_label ) : ?>
             <span class="hjp-ad-slot__label"><?php esc_html_e( 'IKLAN / ADVERTISEMENT', 'hakajobspro' ); ?></span>
@@ -156,6 +192,7 @@ function hakajobspro_get_ad_slot_html( $slot_key ) {
         </div>
     </div>
     <?php
+    endif;
     return ob_get_clean();
 }
 
@@ -382,3 +419,74 @@ function hakajobspro_render_adsense_admin_page() {
     </div>
     <?php
 }
+
+/* ==========================================================================
+   WIDGET WORDPRESS KHUSUS SIDEBAR KANAN: HAKAJOBSPRO SLOT IKLAN ADSENSE
+   ========================================================================== */
+
+class Hakajobspro_Adsense_Widget extends WP_Widget {
+
+    public function __construct() {
+        parent::__construct(
+            'hakajobspro_adsense_widget',
+            __( 'Hakajobspro: Slot Iklan AdSense', 'hakajobspro' ),
+            [ 'description' => __( 'Menampilkan unit iklan Google AdSense atau kode HTML banner di Sidebar Kanan.', 'hakajobspro' ) ]
+        );
+    }
+
+    public function widget( $args, $instance ) {
+        if ( ! get_theme_mod( 'hakajobspro_ads_enable_all', true ) ) {
+            return;
+        }
+        $enabled = ! isset( $instance['enabled'] ) || ! empty( $instance['enabled'] );
+        if ( ! $enabled ) {
+            return;
+        }
+        $title = ! empty( $instance['title'] ) ? $instance['title'] : __( 'Iklan Sponsor', 'hakajobspro' );
+        $code  = ! empty( $instance['code'] ) ? trim( $instance['code'] ) : '';
+
+        if ( empty( $code ) ) {
+            return;
+        }
+
+        echo $args['before_widget']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        if ( ! empty( $title ) ) {
+            echo $args['before_title'] . esc_html( $title ) . $args['after_title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        }
+        echo '<div class="widget-content"><div class="hjp-ad-slot__inner">' . do_shortcode( $code ) . '</div></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo $args['after_widget']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    }
+
+    public function form( $instance ) {
+        $title   = isset( $instance['title'] ) ? $instance['title'] : __( 'Iklan Sponsor', 'hakajobspro' );
+        $code    = isset( $instance['code'] ) ? $instance['code'] : '';
+        $enabled = ! isset( $instance['enabled'] ) || ! empty( $instance['enabled'] );
+        ?>
+        <p>
+            <input class="checkbox" type="checkbox" <?php checked( $enabled ); ?> id="<?php echo esc_attr( $this->get_field_id( 'enabled' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'enabled' ) ); ?>" value="1">
+            <label for="<?php echo esc_attr( $this->get_field_id( 'enabled' ) ); ?>"><strong><?php esc_html_e( 'ON / Aktifkan Widget Iklan Ini', 'hakajobspro' ); ?></strong></label>
+        </p>
+        <p>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Judul Kotak Iklan:', 'hakajobspro' ); ?></label>
+            <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+        </p>
+        <p>
+            <label for="<?php echo esc_attr( $this->get_field_id( 'code' ) ); ?>"><?php esc_html_e( 'Kode Script AdSense / HTML Banner:', 'hakajobspro' ); ?></label>
+            <textarea class="widefat" rows="5" id="<?php echo esc_attr( $this->get_field_id( 'code' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'code' ) ); ?>"><?php echo esc_textarea( $code ); ?></textarea>
+        </p>
+        <?php
+    }
+
+    public function update( $new_instance, $old_instance ) {
+        return [
+            'title'   => sanitize_text_field( $new_instance['title'] ?? '' ),
+            'code'    => hakajobspro_sanitize_ad_code( $new_instance['code'] ?? '' ),
+            'enabled' => ! empty( $new_instance['enabled'] ) ? 1 : 0,
+        ];
+    }
+}
+
+add_action( 'widgets_init', function() {
+    register_widget( 'Hakajobspro_Adsense_Widget' );
+} );
+

@@ -110,43 +110,49 @@ get_header();
   </section>
   <?php endif; ?>
 
-  <!-- LOWONGAN TERBARU -->
-  <?php
-  $latest_count = absint( get_theme_mod( 'hakajobspro_latest_count', 9 ) );
-  $latest_query = new WP_Query( [
-      'post_type'      => 'loker',
-      'posts_per_page' => $latest_count,
-      'post_status'    => 'publish',
-      'orderby'        => 'date',
-      'order'          => 'DESC',
-  ] );
-  if ( $latest_query->have_posts() ) :
-  ?>
-  <section style="padding-top:32px;padding-bottom:20px;" aria-labelledby="latest-heading">
-    <div class="section-head">
-      <h2 id="latest-heading">
-        <?php echo esc_html( get_theme_mod( 'hakajobspro_section_latest_title', __( 'Lowongan Terbaru', 'hakajobspro' ) ) ); ?>
-      </h2>
-      <a href="<?php echo esc_url( get_post_type_archive_link( 'loker' ) ); ?>" class="see-all">
-        <?php esc_html_e( 'Lihat Semua', 'hakajobspro' ); ?> &rsaquo;
-      </a>
-    </div>
-
-    <div class="loker-list">
+  <!-- LOWONGAN TERBARU + SIDEBAR KANAN -->
+  <div class="layout">
+    <main role="main">
       <?php
-      $infeed_after = max( 1, absint( get_theme_mod( 'hakajobspro_ad_infeed_after', 3 ) ) );
-      $loop_i       = 0;
-      while ( $latest_query->have_posts() ) : $latest_query->the_post();
-        $loop_i++;
-        set_query_var( 'hakajobspro_view', 'list' );
-        get_template_part( 'template-parts/content', 'loker' );
-        if ( $loop_i === $infeed_after && function_exists( 'hakajobspro_render_ad_slot' ) ) {
-            hakajobspro_render_ad_slot( 'infeed' );
-        }
-      endwhile; wp_reset_postdata(); ?>
-    </div>
-  </section>
-  <?php endif; ?>
+      $latest_count = absint( get_theme_mod( 'hakajobspro_latest_count', 9 ) );
+      $latest_query = new WP_Query( [
+          'post_type'      => 'loker',
+          'posts_per_page' => $latest_count,
+          'post_status'    => 'publish',
+          'orderby'        => 'date',
+          'order'          => 'DESC',
+      ] );
+      if ( $latest_query->have_posts() ) :
+      ?>
+      <section aria-labelledby="latest-heading">
+        <div class="section-head">
+          <h2 id="latest-heading">
+            <?php echo esc_html( get_theme_mod( 'hakajobspro_section_latest_title', __( 'Lowongan Terbaru', 'hakajobspro' ) ) ); ?>
+          </h2>
+          <a href="<?php echo esc_url( get_post_type_archive_link( 'loker' ) ); ?>" class="see-all">
+            <?php esc_html_e( 'Lihat Semua', 'hakajobspro' ); ?> &rsaquo;
+          </a>
+        </div>
+
+        <div class="loker-list">
+          <?php
+          $infeed_after = max( 1, absint( get_theme_mod( 'hakajobspro_ad_infeed_after', 3 ) ) );
+          $loop_i       = 0;
+          while ( $latest_query->have_posts() ) : $latest_query->the_post();
+            $loop_i++;
+            set_query_var( 'hakajobspro_view', 'list' );
+            get_template_part( 'template-parts/content', 'loker' );
+            if ( $loop_i === $infeed_after && function_exists( 'hakajobspro_render_ad_slot' ) ) {
+                hakajobspro_render_ad_slot( 'infeed' );
+            }
+          endwhile; wp_reset_postdata(); ?>
+        </div>
+      </section>
+      <?php endif; ?>
+    </main>
+
+    <?php get_sidebar(); ?>
+  </div>
 
   <!-- SEKSI KHUSUS TIPS KARIER (POS ARTIKEL WP — TERPISAH DARI LOKER) -->
   <?php
