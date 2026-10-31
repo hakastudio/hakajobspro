@@ -147,6 +147,11 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
         true, 'hakajobspro_header'
     );
 
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_sticky_header',
+        __( 'Kunci Header di Atas Layar Saat Di-scroll (Sticky Header)', 'hakajobspro' ),
+        false, 'hakajobspro_header'
+    );
+
     hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_use_direct_header_menu',
         __( 'Gunakan Daftar Menu Header Langsung di Bawah Ini', 'hakajobspro' ),
         false, 'hakajobspro_header'
