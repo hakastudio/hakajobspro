@@ -117,18 +117,21 @@ function hakajobspro_scripts() {
         );
     }
 
+    $css_ver = HAKAJOBSPRO_VERSION . '.' . (int) @filemtime( HAKAJOBSPRO_DIR . '/assets/css/main.css' );
+    $js_ver  = HAKAJOBSPRO_VERSION . '.' . (int) @filemtime( HAKAJOBSPRO_DIR . '/assets/js/main.js' );
+
     wp_enqueue_style(
         'hakajobspro-main',
         HAKAJOBSPRO_URI . '/assets/css/main.css',
         [],
-        HAKAJOBSPRO_VERSION
+        $css_ver
     );
 
     wp_enqueue_script(
         'hakajobspro-main',
         HAKAJOBSPRO_URI . '/assets/js/main.js',
         [],
-        HAKAJOBSPRO_VERSION,
+        $js_ver,
         true
     );
 
@@ -153,6 +156,9 @@ function hakajobspro_scripts() {
 add_action( 'wp_enqueue_scripts', 'hakajobspro_scripts' );
 
 function hakajobspro_body_classes( $classes ) {
+    // Hapus class 'single-loker' dari <body> agar tidak bentrok dengan selector kartu <article class="single-loker">
+    $classes = array_values( array_diff( $classes, [ 'single-loker' ] ) );
+
     $anticopas_active = (bool) get_theme_mod( 'hakajobspro_enable_anticopas', true );
     if ( $anticopas_active && get_theme_mod( 'hakajobspro_anticopas_bypass_admin', true ) && current_user_can( 'edit_posts' ) ) {
         $anticopas_active = false;
@@ -208,7 +214,10 @@ function hakajobspro_customizer_css() {
         --font-main:         <?php echo $font_main; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
         --container:         <?php echo (int) $container_width; ?>px;
     }
-    html { font-size: <?php echo (int) $font_size; ?>px; }
+    html { font-size: <?php echo (int) $font_size; ?>px; overflow-y: auto !important; }
+    body, body.single-loker { overflow-x: hidden; overflow-y: visible !important; background: <?php echo esc_attr( $body_bg ); ?>; border: 0; border-radius: 0; }
+    article.single-loker { background: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; overflow: visible !important; }
+    .single-loker__body, .entry-content { display: block !important; visibility: visible !important; opacity: 1 !important; }
     .main-nav { background: <?php echo esc_attr( $nav_bg ); ?>; }
     .nav-menu > li > a { color: <?php echo esc_attr( $nav_text ); ?>; }
     .nav-menu > li > a:hover,

@@ -36,9 +36,10 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 16px; scroll-behavior: smooth; }
+html { font-size: 16px; scroll-behavior: smooth; overflow-y: auto; }
 
-body {
+body,
+body.single-loker {
     font-family: var(--font-main);
     background: var(--color-bg);
     color: var(--color-text);
@@ -46,9 +47,13 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: visible !important;
+    border: 0;
+    border-radius: 0;
 }
 
-main { flex: 1; }
+main { flex: 1; min-width: 0; }
 img { max-width: 100%; height: auto; display: block; }
 a { color: var(--color-primary); text-decoration: none; transition: color var(--transition); }
 a:hover { color: var(--color-primary-d); }
@@ -960,24 +965,24 @@ p:last-child { margin-bottom: 0; }
    SINGLE LOKER
    ========================================================================== */
 
-.single-loker {
+article.single-loker {
     background: var(--color-card);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    overflow: hidden;
+    overflow: visible;
 }
 
 .single-loker__header {
-    padding: 28px 28px 20px;
+    padding: 20px 24px 16px;
     border-bottom: 1px solid var(--color-border);
     display: flex;
     align-items: flex-start;
-    gap: 20px;
+    gap: 18px;
 }
 
 .single-loker__logo {
-    width: 80px;
-    height: 80px;
+    width: 72px;
+    height: 72px;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border);
     object-fit: contain;
@@ -986,33 +991,33 @@ p:last-child { margin-bottom: 0; }
 }
 
 .single-loker__logo-placeholder {
-    width: 80px;
-    height: 80px;
+    width: 72px;
+    height: 72px;
     border-radius: var(--radius-md);
     background: var(--color-bg);
     border: 1px solid var(--color-border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 800;
     color: var(--color-muted);
     flex-shrink: 0;
 }
 
-.single-loker__title-area { flex: 1; }
+.single-loker__title-area { flex: 1; min-width: 0; }
 
 .single-loker__title {
-    font-size: clamp(18px, 2.5vw, 26px);
+    font-size: clamp(18px, 2.4vw, 24px);
     font-weight: 800;
     color: var(--color-dark);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .single-loker__company {
-    font-size: 15px;
+    font-size: 14.5px;
     color: var(--color-muted);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-weight: 500;
 }
 
@@ -1029,10 +1034,10 @@ p:last-child { margin-bottom: 0; }
 
 .loker-detail-item {
     background: var(--color-card);
-    padding: 16px 20px;
+    padding: 12px 18px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
 }
 
 .loker-detail-item__label {
@@ -1049,10 +1054,18 @@ p:last-child { margin-bottom: 0; }
     font-weight: 600;
 }
 
-.loker-detail-item__value--salary { color: #2e7d32; font-size: 16px; }
+.loker-detail-item__value--salary { color: #2e7d32; font-size: 15px; }
 
 /* Konten deskripsi */
-.single-loker__body { padding: 24px 28px; }
+.single-loker__body {
+    padding: 24px 28px;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    color: var(--color-text);
+    font-size: 15.5px;
+    line-height: 1.75;
+}
 
 .single-loker__body h2,
 .single-loker__body h3 {

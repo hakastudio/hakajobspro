@@ -45,7 +45,15 @@ while ( have_posts() ) : the_post();
 
       <div class="entry-content">
         <?php
+        $raw_post_content = (string) get_post_field( 'post_content', $post_id );
+        ob_start();
         the_content();
+        $rendered_content = ob_get_clean();
+
+        if ( '' === trim( wp_strip_all_tags( $rendered_content ) ) && '' !== trim( $raw_post_content ) ) {
+            $rendered_content = wpautop( do_shortcode( $raw_post_content ) );
+        }
+        echo $rendered_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
         wp_link_pages( [
             'before' => '<div class="page-links">' . esc_html__( 'Halaman:', 'hakajobspro' ),

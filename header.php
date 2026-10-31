@@ -19,10 +19,9 @@
 
     <!-- Logo / Branding -->
     <?php if ( has_custom_logo() ) : ?>
-      <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-branding" rel="home"
-         aria-label="<?php bloginfo( 'name' ); ?>">
+      <div class="site-branding">
         <?php the_custom_logo(); ?>
-      </a>
+      </div>
     <?php else : ?>
       <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-branding" rel="home">
         <span class="site-title-text">

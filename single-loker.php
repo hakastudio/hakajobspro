@@ -28,8 +28,6 @@ while ( have_posts() ) : the_post();
 <div class="layout">
 <main role="main">
 
-  <?php hakajobspro_render_admin_wa_bar( $post_id ); ?>
-
   <article class="single-loker<?php echo $expired ? ' single-loker--expired' : ''; ?>">
 
     <?php if ( $expired ) : ?>
@@ -161,7 +159,15 @@ while ( have_posts() ) : the_post();
     <!-- DESKRIPSI LOKER -->
     <div class="single-loker__body">
       <?php
+      $raw_post_content = (string) get_post_field( 'post_content', $post_id );
+      ob_start();
       the_content();
+      $rendered_content = ob_get_clean();
+
+      if ( '' === trim( wp_strip_all_tags( $rendered_content ) ) && '' !== trim( $raw_post_content ) ) {
+          $rendered_content = wpautop( do_shortcode( $raw_post_content ) );
+      }
+      echo $rendered_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
       // Cara melamar dari meta box
       if ( $cara ) :
@@ -219,6 +225,10 @@ while ( have_posts() ) : the_post();
     <?php endif; ?>
 
   </article>
+
+  <div style="margin-top:18px;">
+    <?php hakajobspro_render_admin_wa_bar( $post_id ); ?>
+  </div>
 
   <!-- LOKER TERKAIT -->
   <?php

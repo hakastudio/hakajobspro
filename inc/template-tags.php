@@ -492,7 +492,7 @@ function hakajobspro_output_jobposting_schema() {
         '@context'           => 'https://schema.org/',
         '@type'              => 'JobPosting',
         'title'              => get_the_title( $post_id ),
-        'description'        => wp_kses_post( apply_filters( 'the_content', get_post_field( 'post_content', $post_id ) ) ),
+        'description'        => wp_kses_post( wpautop( (string) get_post_field( 'post_content', $post_id ) ) ),
         'datePosted'         => get_the_date( 'c', $post_id ),
         'employmentType'     => $employment_type,
         'hiringOrganization' => $org_data,
