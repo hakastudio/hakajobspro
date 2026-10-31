@@ -13,13 +13,19 @@ function hakajobspro_format_gaji( $min, $max ) {
     if ( ! $min && ! $max ) return '';
 
     $fmt = function( $n ) {
+        $n = (float) $n;
         if ( $n >= 1000000 ) {
-            return 'Rp ' . number_format( $n / 1000000, 1, ',', '.' ) . ' Jt';
+            $jt  = $n / 1000000;
+            $str = rtrim( rtrim( number_format( $jt, 2, ',', '.' ), '0' ), ',' );
+            return 'Rp ' . $str . ' Jt';
         }
         return 'Rp ' . number_format( $n, 0, ',', '.' );
     };
 
     if ( $min && $max ) {
+        if ( (int) $min === (int) $max ) {
+            return $fmt( $min );
+        }
         return $fmt( $min ) . ' - ' . $fmt( $max );
     }
     return $min ? $fmt( $min ) . ' +' : 'Hingga ' . $fmt( $max );

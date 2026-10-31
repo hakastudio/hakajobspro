@@ -139,12 +139,12 @@ function hakajobspro_meta_fields() {
         'loker_gaji_min' => [
             'label' => __( 'Gaji Minimum (Rp)', 'hakajobspro' ),
             'type'  => 'number',
-            'note'  => 'Kosongkan jika tidak ditampilkan',
+            'note'  => 'Ketik angka tanpa titik/Rp (Contoh: 3200000 otomatis tampil Rp 3,2 Jt). Kosongkan jika dirahasiakan.',
         ],
         'loker_gaji_max' => [
             'label' => __( 'Gaji Maksimum (Rp)', 'hakajobspro' ),
             'type'  => 'number',
-            'note'  => 'Kosongkan jika tidak ditampilkan',
+            'note'  => 'Ketik angka tanpa titik/Rp (Contoh: 4500000 otomatis tampil Rp 4,5 Jt). Kosongkan jika dirahasiakan.',
         ],
         'loker_pendidikan' => [
             'label'   => __( 'Pendidikan Minimum', 'hakajobspro' ),
