@@ -64,6 +64,51 @@ function hakajobspro_is_expired( $post_id = null ) {
     return $status_close === 'closed';
 }
 
+/**
+ * Meta Query untuk hanya mengambil lowongan yang masih aktif (belum expired / belum tutup)
+ */
+function hakajobspro_get_active_loker_meta_query() {
+    if ( ! get_theme_mod( 'hakajobspro_hide_expired_loker', true ) ) {
+        return [];
+    }
+
+    $today = current_time( 'Y-m-d' );
+
+    return [
+        'relation' => 'AND',
+        [
+            'relation' => 'OR',
+            [
+                'key'     => '_loker_status_close',
+                'compare' => 'NOT EXISTS',
+            ],
+            [
+                'key'     => '_loker_status_close',
+                'value'   => 'closed',
+                'compare' => '!=',
+            ],
+        ],
+        [
+            'relation' => 'OR',
+            [
+                'key'     => '_loker_deadline',
+                'compare' => 'NOT EXISTS',
+            ],
+            [
+                'key'     => '_loker_deadline',
+                'value'   => '',
+                'compare' => '=',
+            ],
+            [
+                'key'     => '_loker_deadline',
+                'value'   => $today,
+                'compare' => '>=',
+                'type'    => 'DATE',
+            ],
+        ],
+    ];
+}
+
 /* ==========================================================================
    HELPER: AMBIL URL ARSIP PERUSAHAAN DARI POST LOKER
    ========================================================================== */
@@ -359,9 +404,22 @@ add_action( 'wp', 'hakajobspro_track_loker_views' );
 
 function hakajobspro_render_popular_loker_widget( $count = 5 ) {
     $exclude_id = is_singular( 'loker' ) ? [ get_the_ID() ] : [];
+    $range_days = absint( get_theme_mod( 'hakajobspro_popular_widget_range', 30 ) );
 
-    // 1. Ambil ID loker (CPT 'loker') yang memiliki jumlah tayangan (_loker_views) tertinggi
-    $viewed_ids = get_posts( [
+    $date_query = [];
+    if ( $range_days > 0 ) {
+        $date_query = [
+            [
+                'after'     => sprintf( '%d days ago', $range_days ),
+                'inclusive' => true,
+            ],
+        ];
+    }
+
+    $active_meta = hakajobspro_get_active_loker_meta_query();
+
+    // 1. Ambil ID loker aktif (CPT 'loker') yang memiliki tayangan (_loker_views) tertinggi dalam periode waktu
+    $args_viewed = [
         'post_type'      => 'loker',
         'posts_per_page' => $count,
         'post_status'    => 'publish',
@@ -369,12 +427,20 @@ function hakajobspro_render_popular_loker_widget( $count = 5 ) {
         'meta_key'       => '_loker_views',
         'orderby'        => [ 'meta_value_num' => 'DESC', 'date' => 'DESC' ],
         'fields'         => 'ids',
-    ] );
+    ];
+    if ( ! empty( $date_query ) ) {
+        $args_viewed['date_query'] = $date_query;
+    }
+    if ( ! empty( $active_meta ) ) {
+        $args_viewed['meta_query'] = [ $active_meta ];
+    }
 
-    // 2. Jika jumlah yang punya _loker_views kurang dari $count, genapkan dengan loker terbaru
+    $viewed_ids = get_posts( $args_viewed );
+
+    // 2. Jika jumlah yang punya _loker_views kurang dari $count, genapkan dengan loker aktif terbaru dalam rentang waktu
     if ( count( $viewed_ids ) < $count ) {
-        $needed     = $count - count( $viewed_ids );
-        $recent_ids = get_posts( [
+        $needed      = $count - count( $viewed_ids );
+        $args_recent = [
             'post_type'      => 'loker',
             'posts_per_page' => $needed,
             'post_status'    => 'publish',
@@ -382,15 +448,46 @@ function hakajobspro_render_popular_loker_widget( $count = 5 ) {
             'orderby'        => 'date',
             'order'          => 'DESC',
             'fields'         => 'ids',
-        ] );
-        $final_ids = array_merge( $viewed_ids, $recent_ids );
+        ];
+        if ( ! empty( $date_query ) ) {
+            $args_recent['date_query'] = $date_query;
+        }
+        if ( ! empty( $active_meta ) ) {
+            $args_recent['meta_query'] = [ $active_meta ];
+        }
+
+        $recent_ids = get_posts( $args_recent );
+        $merged     = array_merge( $viewed_ids, $recent_ids );
+
+        // Jika masih kurang (misal post dalam rentang 7/14/30 hari sedikit), ambil loker aktif terbaru tanpa batasan tanggal
+        if ( count( $merged ) < $count && ! empty( $date_query ) ) {
+            $still_needed  = $count - count( $merged );
+            $args_fallback = [
+                'post_type'      => 'loker',
+                'posts_per_page' => $still_needed,
+                'post_status'    => 'publish',
+                'post__not_in'   => array_merge( $exclude_id, $merged ),
+                'orderby'        => 'date',
+                'order'          => 'DESC',
+                'fields'         => 'ids',
+            ];
+            if ( ! empty( $active_meta ) ) {
+                $args_fallback['meta_query'] = [ $active_meta ];
+            }
+            $fallback_ids = get_posts( $args_fallback );
+            $final_ids    = array_merge( $merged, $fallback_ids );
+        } else {
+            $final_ids = $merged;
+        }
     } else {
         $final_ids = $viewed_ids;
     }
 
-    // 3. Jika baru ada 1 loker (yang sedang dibuka), tetap tampilkan agar widget tidak hilang
+    // 3. Jika baru ada 1 loker (yang sedang dibuka), tampilkan hanya jika masih aktif
     if ( empty( $final_ids ) && ! empty( $exclude_id ) ) {
-        $final_ids = $exclude_id;
+        if ( ! hakajobspro_is_expired( $exclude_id[0] ) ) {
+            $final_ids = $exclude_id;
+        }
     }
 
     if ( empty( $final_ids ) ) {

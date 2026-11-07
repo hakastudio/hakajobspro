@@ -149,17 +149,23 @@ if ( function_exists( 'hakajobspro_get_ad_slot_html' ) ) :
   <div class="footer-bottom">
     <div class="container">
       <?php
-      $copyright = get_theme_mod(
-          'hakajobspro_footer_copyright',
-          sprintf( '&copy; %d %s. Semua hak cipta dilindungi.', date( 'Y' ), get_bloginfo( 'name' ) )
-      );
-      echo wp_kses_post( $copyright );
-      ?>
-      &nbsp;&nbsp;|&nbsp;&nbsp;
-      <?php
-      if ( function_exists( 'hakajobspro_render_footer_bottom_links' ) ) {
-          hakajobspro_render_footer_bottom_links();
+      $default_copyright = sprintf( '&copy; %d %s - All Rights Reserved', date( 'Y' ), get_bloginfo( 'name' ) );
+      $copyright         = get_theme_mod( 'hakajobspro_footer_copyright', $default_copyright );
+      if ( empty( $copyright ) ) {
+          $copyright = $default_copyright;
       }
+      echo wp_kses_post( $copyright );
+
+      $show_bottom_links = get_theme_mod( 'hakajobspro_footer_show_bottom_links', false );
+      if ( $show_bottom_links && function_exists( 'hakajobspro_get_footer_bottom_links_html' ) ) :
+          $bottom_links = hakajobspro_get_footer_bottom_links_html();
+          if ( ! empty( $bottom_links ) ) :
+      ?>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          <?php echo $bottom_links; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+      <?php
+          endif;
+      endif;
       ?>
     </div>
   </div>

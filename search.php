@@ -20,6 +20,9 @@ get_header(); ?>
   <div class="loker-list">
     <?php while ( have_posts() ) : the_post();
       if ( get_post_type() === 'loker' ) :
+        if ( hakajobspro_is_expired( get_the_ID() ) && get_theme_mod( 'hakajobspro_hide_expired_loker', true ) ) {
+            continue;
+        }
         set_query_var( 'hakajobspro_view', 'list' );
         get_template_part( 'template-parts/content', 'loker' );
       else :

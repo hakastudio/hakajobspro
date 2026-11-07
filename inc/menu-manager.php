@@ -225,9 +225,9 @@ function hakajobspro_render_footer_column_links( $col_num ) {
 }
 
 /**
- * Render Menu Baris Bawah Footer (sebelah Copyright)
+ * Dapatkan HTML Menu Baris Bawah Footer (sebelah Copyright)
  */
-function hakajobspro_render_footer_bottom_links() {
+function hakajobspro_get_footer_bottom_links_html() {
     $raw = trim( (string) get_theme_mod( 'hakajobspro_footer_bottom_links', '' ) );
 
     if ( '' !== $raw ) {
@@ -237,13 +237,12 @@ function hakajobspro_render_footer_bottom_links() {
             foreach ( $items as $item ) {
                 $links[] = '<a href="' . esc_url( $item['url'] ) . '">' . esc_html( $item['label'] ) . '</a>';
             }
-            echo implode( ' &nbsp;&bull;&nbsp; ', $links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-            return;
+            return implode( ' &nbsp;&bull;&nbsp; ', $links );
         }
     }
 
     if ( has_nav_menu( 'footer' ) ) {
-        wp_nav_menu( [
+        return wp_nav_menu( [
             'theme_location' => 'footer',
             'container'      => false,
             'menu_class'     => '',
@@ -251,16 +250,31 @@ function hakajobspro_render_footer_bottom_links() {
             'items_wrap'     => '%3$s',
             'walker'         => new Hakajobspro_Inline_Walker(),
             'fallback_cb'    => false,
+            'echo'           => false,
         ] );
-        return;
     }
 
-    $items = hakajobspro_parse_menu_lines( hakajobspro_get_default_footer_bottom_text() );
-    $links = [];
-    foreach ( $items as $item ) {
-        $links[] = '<a href="' . esc_url( $item['url'] ) . '">' . esc_html( $item['label'] ) . '</a>';
+    $default_text = hakajobspro_get_default_footer_bottom_text();
+    if ( ! empty( $default_text ) ) {
+        $items = hakajobspro_parse_menu_lines( $default_text );
+        $links = [];
+        foreach ( $items as $item ) {
+            $links[] = '<a href="' . esc_url( $item['url'] ) . '">' . esc_html( $item['label'] ) . '</a>';
+        }
+        return implode( ' &nbsp;&bull;&nbsp; ', $links );
     }
-    echo implode( ' &nbsp;&bull;&nbsp; ', $links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+    return '';
+}
+
+/**
+ * Render Menu Baris Bawah Footer (sebelah Copyright)
+ */
+function hakajobspro_render_footer_bottom_links() {
+    $html = hakajobspro_get_footer_bottom_links_html();
+    if ( $html ) {
+        echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    }
 }
 
 /* ==========================================================================

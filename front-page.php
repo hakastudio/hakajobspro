@@ -102,12 +102,17 @@ get_header();
 
   <!-- LOWONGAN UNGGULAN -->
   <?php
+  $active_meta    = function_exists( 'hakajobspro_get_active_loker_meta_query' ) ? hakajobspro_get_active_loker_meta_query() : [];
+  $featured_meta  = [ [ 'key' => '_loker_featured', 'value' => 'Ya' ] ];
+  if ( ! empty( $active_meta ) ) {
+      $featured_meta[] = $active_meta;
+  }
   $featured_count = absint( get_theme_mod( 'hakajobspro_featured_count', 6 ) );
   $featured_query = new WP_Query( [
       'post_type'      => 'loker',
       'posts_per_page' => $featured_count,
       'post_status'    => 'publish',
-      'meta_query'     => [ [ 'key' => '_loker_featured', 'value' => 'Ya' ] ],
+      'meta_query'     => $featured_meta,
       'orderby'        => 'date',
       'order'          => 'DESC',
   ] );
@@ -137,14 +142,18 @@ get_header();
     <main role="main">
       <?php
       $latest_count = absint( get_theme_mod( 'hakajobspro_latest_count', 10 ) );
-      $latest_query = new WP_Query( [
+      $latest_args  = [
           'post_type'           => 'loker',
           'posts_per_page'      => $latest_count,
           'post_status'         => 'publish',
           'ignore_sticky_posts' => true,
           'orderby'             => 'date',
           'order'               => 'DESC',
-      ] );
+      ];
+      if ( ! empty( $active_meta ) ) {
+          $latest_args['meta_query'] = [ $active_meta ];
+      }
+      $latest_query = new WP_Query( $latest_args );
       if ( $latest_query->have_posts() ) :
       ?>
       <section aria-labelledby="latest-heading">

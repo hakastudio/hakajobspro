@@ -231,6 +231,31 @@ function hakajobspro_maybe_close_expired_loker() {
 }
 add_action( 'init', 'hakajobspro_maybe_close_expired_loker', 20 );
 
+/* Sembunyikan otomatis lowongan yang sudah tutup/melewati deadline pada kueri utama */
+function hakajobspro_filter_expired_loker_queries( $query ) {
+    if ( is_admin() || ! $query->is_main_query() ) {
+        return;
+    }
+
+    if ( ! get_theme_mod( 'hakajobspro_hide_expired_loker', true ) ) {
+        return;
+    }
+
+    $is_loker_query = $query->is_post_type_archive( 'loker' )
+        || $query->is_tax( [ 'loker_kategori', 'loker_pendidikan', 'loker_lokasi', 'loker_tipe' ] )
+        || ( $query->is_search() && $query->get( 'post_type' ) === 'loker' );
+
+    if ( $is_loker_query && function_exists( 'hakajobspro_get_active_loker_meta_query' ) ) {
+        $active_meta = hakajobspro_get_active_loker_meta_query();
+        if ( ! empty( $active_meta ) ) {
+            $meta_query   = $query->get( 'meta_query' ) ?: [];
+            $meta_query[] = $active_meta;
+            $query->set( 'meta_query', $meta_query );
+        }
+    }
+}
+add_action( 'pre_get_posts', 'hakajobspro_filter_expired_loker_queries' );
+
 /* Buat & pisahkan daftar term default otomatis (Kategori Pekerjaan, Pendidikan, Tipe Pekerjaan, Lokasi) */
 function hakajobspro_seed_default_terms() {
     if ( ! get_option( 'hakajobspro_default_terms_seeded_v2' ) ) {

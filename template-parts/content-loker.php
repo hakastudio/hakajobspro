@@ -10,6 +10,11 @@ $view     = isset( $hakajobspro_view ) ? $hakajobspro_view : 'grid';
 $featured = get_post_meta( $post_id, '_loker_featured', true ) === 'Ya';
 $expired  = hakajobspro_is_expired( $post_id );
 
+// Sembunyikan jika lowongan sudah tutup dan opsi hide expired aktif
+if ( $expired && get_theme_mod( 'hakajobspro_hide_expired_loker', true ) && ! is_singular( 'loker' ) && empty( $GLOBALS['hakajobspro_allow_expired_card'] ) ) {
+    return;
+}
+
 $perusahaan     = hakajobspro_get_loker_perusahaan( $post_id );
 $perusahaan_url = hakajobspro_get_perusahaan_url( $post_id );
 $tipe_kerja     = hakajobspro_get_loker_tipe( $post_id );

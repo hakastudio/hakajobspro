@@ -312,6 +312,11 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
         true, 'hakajobspro_loker_settings'
     );
 
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_hide_expired_loker',
+        __( 'Sembunyikan Lowongan yang Sudah Ditutup / Melewati Batas Waktu dari Daftar', 'hakajobspro' ),
+        true, 'hakajobspro_loker_settings'
+    );
+
     hakajobspro_add_text_setting( $wp_customize, 'hakajobspro_badge_closed',
         __( 'Label Badge Lowongan Ditutup', 'hakajobspro' ),
         __( 'Ditutup', 'hakajobspro' ),
@@ -420,6 +425,18 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
         5, 'hakajobspro_sidebar_settings', 1, 15
     );
 
+    hakajobspro_add_select_setting( $wp_customize, 'hakajobspro_popular_widget_range',
+        __( 'Rentang Waktu Loker Populer Berdasarkan Tanggal Tayang', 'hakajobspro' ),
+        '30',
+        [
+            '7'  => __( '7 Hari Terakhir', 'hakajobspro' ),
+            '14' => __( '14 Hari Terakhir', 'hakajobspro' ),
+            '30' => __( '30 Hari Terakhir', 'hakajobspro' ),
+            '0'  => __( 'Semua Waktu', 'hakajobspro' ),
+        ],
+        'hakajobspro_sidebar_settings'
+    );
+
     // 2. Pengaturan Kategori Lowongan
     hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_sidebar_show_categories',
         __( 'Tampilkan Widget Kategori Lowongan', 'hakajobspro' ),
@@ -430,6 +447,16 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
         __( 'Judul Widget Kategori Lowongan', 'hakajobspro' ),
         __( 'Kategori Lowongan', 'hakajobspro' ),
         'hakajobspro_sidebar_settings'
+    );
+
+    hakajobspro_add_number_setting( $wp_customize, 'hakajobspro_sidebar_categories_max',
+        __( 'Batas Jumlah Kategori Ditampilkan (0 = Tampilkan Semua)', 'hakajobspro' ),
+        0, 'hakajobspro_sidebar_settings', 0, 50
+    );
+
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_sidebar_categories_show_count',
+        __( 'Tampilkan Jumlah Lowongan per Kategori (Contoh: "Operator (3)")', 'hakajobspro' ),
+        true, 'hakajobspro_sidebar_settings'
     );
 
     hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_sidebar_categories_hide_empty',
@@ -540,8 +567,13 @@ function hakajobspro_customize_register( WP_Customize_Manager $wp_customize ) {
 
     hakajobspro_add_text_setting( $wp_customize, 'hakajobspro_footer_copyright',
         __( 'Teks Hak Cipta', 'hakajobspro' ),
-        sprintf( '&copy; %d %s. Semua hak cipta dilindungi.', date( 'Y' ), get_bloginfo( 'name' ) ),
+        sprintf( '&copy; %d %s - All Rights Reserved', date( 'Y' ), get_bloginfo( 'name' ) ),
         'hakajobspro_footer'
+    );
+
+    hakajobspro_add_checkbox_setting( $wp_customize, 'hakajobspro_footer_show_bottom_links',
+        __( 'Tampilkan Link Tambahan di Baris Bawah Footer (About Us, Contact Us, dll)', 'hakajobspro' ),
+        false, 'hakajobspro_footer'
     );
 
     hakajobspro_add_textarea_setting( $wp_customize, 'hakajobspro_footer_bottom_links',

@@ -21,7 +21,18 @@
   if ( get_theme_mod( 'hakajobspro_sidebar_show_categories', true ) ) :
       $hide_empty = (bool) get_theme_mod( 'hakajobspro_sidebar_categories_hide_empty', false );
       $kat_title  = get_theme_mod( 'hakajobspro_sidebar_categories_title', __( 'Kategori Lowongan', 'hakajobspro' ) );
-      $kat_list   = get_terms( [ 'taxonomy' => 'loker_kategori', 'hide_empty' => $hide_empty ] );
+      $show_count = (bool) get_theme_mod( 'hakajobspro_sidebar_categories_show_count', true );
+      $kat_max    = absint( get_theme_mod( 'hakajobspro_sidebar_categories_max', 0 ) );
+
+      $term_args = [
+          'taxonomy'   => 'loker_kategori',
+          'hide_empty' => $hide_empty,
+      ];
+      if ( $kat_max > 0 ) {
+          $term_args['number'] = $kat_max;
+      }
+
+      $kat_list = get_terms( $term_args );
       if ( $kat_list && ! is_wp_error( $kat_list ) ) :
       ?>
       <div class="widget">
@@ -32,10 +43,12 @@
             <li>
               <a href="<?php echo esc_url( get_term_link( $kat ) ); ?>">
                 <span><?php echo esc_html( $kat->name ); ?></span>
-                <?php if ( $kat->count > 0 ) : ?>
-                  <span class="count"><?php echo (int) $kat->count; ?></span>
-                <?php else : ?>
-                  <span class="count" aria-hidden="true">&rsaquo;</span>
+                <?php if ( $show_count ) : ?>
+                  <?php if ( $kat->count > 0 ) : ?>
+                    <span class="count"><?php echo (int) $kat->count; ?></span>
+                  <?php else : ?>
+                    <span class="count" aria-hidden="true">&rsaquo;</span>
+                  <?php endif; ?>
                 <?php endif; ?>
               </a>
             </li>

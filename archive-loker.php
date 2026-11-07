@@ -42,7 +42,9 @@ if ( $sel_tipe ) {
     $tax_query[] = [ 'taxonomy' => 'loker_tipe', 'field' => 'slug', 'terms' => $sel_tipe ];
 }
 
-$loker_query = new WP_Query( [
+$active_meta = function_exists( 'hakajobspro_get_active_loker_meta_query' ) ? hakajobspro_get_active_loker_meta_query() : [];
+
+$query_args = [
     'post_type'           => 'loker',
     'posts_per_page'      => $per_page,
     'paged'               => $paged,
@@ -52,7 +54,12 @@ $loker_query = new WP_Query( [
     's'                   => $search,
     'orderby'             => 'date',
     'order'               => 'DESC',
-] );
+];
+if ( ! empty( $active_meta ) ) {
+    $query_args['meta_query'] = [ $active_meta ];
+}
+
+$loker_query = new WP_Query( $query_args );
 
 $archive_heading = get_theme_mod( 'hakajobspro_archive_title', __( 'Semua Lowongan Kerja', 'hakajobspro' ) );
 if ( $queried_term && ! empty( $queried_term->name ) ) {

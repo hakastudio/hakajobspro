@@ -160,12 +160,16 @@ $base_url = get_term_link( $term );
       </a>
     </div>
 
-    <?php if ( $history_query->have_posts() ) : ?>
+    <?php if ( $history_query->have_posts() ) :
+      $GLOBALS['hakajobspro_allow_expired_card'] = true;
+    ?>
       <div class="loker-list">
         <?php while ( $history_query->have_posts() ) : $history_query->the_post();
           set_query_var( 'hakajobspro_view', 'list' );
           get_template_part( 'template-parts/content', 'loker' );
-        endwhile; wp_reset_postdata(); ?>
+        endwhile; wp_reset_postdata();
+        unset( $GLOBALS['hakajobspro_allow_expired_card'] );
+        ?>
       </div>
 
       <?php hakajobspro_pagination( $history_query ); ?>
