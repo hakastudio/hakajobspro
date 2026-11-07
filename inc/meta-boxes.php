@@ -132,9 +132,19 @@ function hakajobspro_meta_fields() {
             'note'  => 'Contoh: https://perusahaan.com',
         ],
         'loker_lokasi_detail' => [
-            'label' => __( 'Lokasi Detail / Alamat', 'hakajobspro' ),
+            'label' => __( 'Lokasi Detail / Alamat (streetAddress)', 'hakajobspro' ),
             'type'  => 'text',
-            'note'  => 'Contoh: Pondok Ungu, Bekasi Utara, Jawa Barat',
+            'note'  => 'Contoh: Pondok Ungu, Bekasi Utara. (Bisa dikosongkan, tema otomatis memakai nama daerah)',
+        ],
+        'loker_provinsi' => [
+            'label' => __( 'Provinsi / Wilayah (addressRegion)', 'hakajobspro' ),
+            'type'  => 'text',
+            'note'  => 'Contoh: Jawa Barat. (Bisa dikosongkan, tema otomatis mendeteksi dari kota/daerah)',
+        ],
+        'loker_kodepos' => [
+            'label' => __( 'Kode Pos (postalCode)', 'hakajobspro' ),
+            'type'  => 'text',
+            'note'  => 'Contoh: 17141. (Bisa dikosongkan, tema otomatis mengisinya agar Google Schema valid hijau)',
         ],
         'loker_pengalaman' => [
             'label' => __( 'Pengalaman Kerja', 'hakajobspro' ),

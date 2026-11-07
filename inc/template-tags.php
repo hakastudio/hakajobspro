@@ -547,6 +547,94 @@ function hakajobspro_render_popular_loker_widget( $count = 5 ) {
    SCHEMA JOBPOSTING JSON-LD (STANDAR GOOGLE JOBS + ANTI-BENTROK YOAST/RANKMATH)
    ========================================================================== */
 
+/**
+ * Deteksi nama Provinsi (addressRegion) berdasarkan nama Kota / Daerah
+ */
+function hakajobspro_detect_region_by_city( $city ) {
+    $city = strtolower( trim( (string) $city ) );
+    if ( '' === $city ) {
+        return 'Indonesia';
+    }
+
+    $map = [
+        'dki jakarta'    => [ 'jakarta', 'jaksel', 'jakbar', 'jaktim', 'jakpus', 'jakut', 'kepulauan seribu' ],
+        'jawa barat'     => [ 'bekasi', 'cikarang', 'bogor', 'depok', 'bandung', 'karawang', 'sukabumi', 'cirebon', 'tasikmalaya', 'garut', 'purwakarta', 'subang', 'sumedang', 'indramayu', 'majalengka', 'kuningan', 'cianjur', 'banjar', 'cimahi' ],
+        'banten'         => [ 'tangerang', 'tangsel', 'serang', 'cilegon', 'pandeglang', 'lebak', 'bsd' ],
+        'jawa tengah'    => [ 'semarang', 'solo', 'surakarta', 'magelang', 'tegal', 'pekalongan', 'salatiga', 'kudus', 'klaten', 'banyumas', 'purwokerto', 'cilacap', 'kebumen', 'brebes', 'boyolali', 'sukoharjo', 'karanganyar', 'sragen', 'wonogiri', 'wonosobo', 'temanggung', 'kendal', 'batang', 'pemalang', 'demak', 'grobogan', 'blora', 'rembang', 'pati', 'jepara', 'purworejo' ],
+        'di yogyakarta'  => [ 'yogyakarta', 'jogja', 'sleman', 'bantul', 'kulon progo', 'gunungkidul' ],
+        'jawa timur'     => [ 'surabaya', 'malang', 'sidoarjo', 'gresik', 'pasuruan', 'kediri', 'mojokerto', 'madiun', 'batu', 'blitar', 'probolinggo', 'banyuwangi', 'jember', 'bojonegoro', 'tuban', 'lamongan', 'nganjuk', 'magetan', 'ngawi', 'pacitan', 'ponorogo', 'trenggalek', 'tulungagung', 'lumajang', 'bondowoso', 'situbondo', 'bangakalan', 'sampang', 'pamekasan', 'sumenep' ],
+        'lampung'        => [ 'lampung', 'bandar lampung', 'metro', 'lampung selatan', 'lampung tengah', 'lampung utara', 'lampung barat', 'lampung timur', 'tulang bawang', 'pesawaran', 'pringsewu', 'mesuji', 'tubaba', 'pesisir barat', 'way kanan' ],
+        'sumatera utara' => [ 'medan', 'binjai', 'pematangsiantar', 'tebing tinggi', 'tanjungbalai', 'deli serdang', 'asahan', 'karo', 'langkat', 'simalungun' ],
+        'sumatera selatan' => [ 'palembang', 'prabumulih', 'lubuklinggau', 'pagar alam', 'banyuasin', 'oki', 'oku', 'muara enim', 'lahat' ],
+        'sumatera barat' => [ 'padang', 'bukittinggi', 'payakumbuh', 'pariaman', 'solok', 'padang panjang', 'sawahlunto' ],
+        'riau'           => [ 'pekanbaru', 'dumai', 'kampar', 'bengkalis', 'siak', 'rokan', 'pelalawan', 'kuansing', 'indragiri' ],
+        'kepulauan riau' => [ 'batam', 'tanjungpinang', 'bintan', 'karimun', 'natuna', 'anambas', 'lingga' ],
+        'bali'           => [ 'bali', 'denpasar', 'badung', 'gianyar', 'tabanan', 'buleleng', 'jembrana', 'klungkung', 'bangli', 'karangasem' ],
+        'sulawesi selatan' => [ 'makassar', 'gowa', 'maros', 'palopo', 'parepare', 'bone', 'bulukumba', 'wajo', 'sidrap', 'pinrang' ],
+        'kalimantan timur' => [ 'samarinda', 'balikpapan', 'bontang', 'kutai', 'kaltim', 'penajam paser utara', 'ikn' ],
+        'kalimantan barat' => [ 'pontianak', 'singkawang', 'kubu raya', 'sambas', 'ketapang', 'sintang' ],
+        'kalimantan selatan' => [ 'banjarmasin', 'banjarbaru', 'martapura', 'kotabaru', 'tanah bumbu' ],
+    ];
+
+    foreach ( $map as $province => $keywords ) {
+        foreach ( $keywords as $kw ) {
+            if ( false !== strpos( $city, $kw ) ) {
+                return ucwords( $province );
+            }
+        }
+    }
+
+    return 'Indonesia';
+}
+
+/**
+ * Deteksi Kode Pos (postalCode) berdasarkan nama Kota / Daerah
+ */
+function hakajobspro_detect_postal_code_by_city( $city ) {
+    $city = strtolower( trim( (string) $city ) );
+    if ( '' === $city ) {
+        return '10110';
+    }
+
+    $map = [
+        '10110' => [ 'jakarta' ],
+        '17141' => [ 'bekasi', 'cikarang' ],
+        '16111' => [ 'bogor' ],
+        '16411' => [ 'depok' ],
+        '15111' => [ 'tangerang', 'tangsel', 'bsd' ],
+        '40111' => [ 'bandung', 'cimahi' ],
+        '41311' => [ 'karawang' ],
+        '42111' => [ 'serang', 'cilegon' ],
+        '50131' => [ 'semarang' ],
+        '57111' => [ 'solo', 'surakarta' ],
+        '55211' => [ 'yogyakarta', 'jogja', 'sleman', 'bantul' ],
+        '60111' => [ 'surabaya' ],
+        '65111' => [ 'malang' ],
+        '61211' => [ 'sidoarjo', 'gresik' ],
+        '35111' => [ 'lampung', 'metro' ],
+        '30111' => [ 'palembang' ],
+        '20111' => [ 'medan', 'deli serdang' ],
+        '25111' => [ 'padang' ],
+        '28111' => [ 'pekanbaru' ],
+        '29411' => [ 'batam', 'tanjungpinang' ],
+        '80111' => [ 'bali', 'denpasar', 'badung' ],
+        '90111' => [ 'makassar' ],
+        '76111' => [ 'balikpapan', 'samarinda' ],
+        '70111' => [ 'banjarmasin', 'banjarbaru' ],
+        '78111' => [ 'pontianak' ],
+    ];
+
+    foreach ( $map as $code => $keywords ) {
+        foreach ( $keywords as $kw ) {
+            if ( false !== strpos( $city, $kw ) ) {
+                return $code;
+            }
+        }
+    }
+
+    return '10110';
+}
+
 function hakajobspro_output_jobposting_schema() {
     if ( ! is_singular( 'loker' ) ) {
         return;
@@ -576,6 +664,38 @@ function hakajobspro_output_jobposting_schema() {
     $gaji_max   = absint( get_post_meta( $post_id, '_loker_gaji_max', true ) );
     $deadline   = get_post_meta( $post_id, '_loker_deadline', true );
     $link_lamar = get_post_meta( $post_id, '_loker_link_lamar', true );
+
+    // Ambil data lokasi secara terstruktur untuk PostalAddress
+    $lokasi_terms = get_the_terms( $post_id, 'loker_lokasi' );
+    $lokasi_city  = ( $lokasi_terms && ! is_wp_error( $lokasi_terms ) ) ? $lokasi_terms[0]->name : '';
+    $lokasi_det   = get_post_meta( $post_id, '_loker_lokasi_detail', true );
+    $provinsi     = get_post_meta( $post_id, '_loker_provinsi', true );
+    $kodepos      = get_post_meta( $post_id, '_loker_kodepos', true );
+
+    // 1. addressLocality: Kota / Daerah (misal "Bekasi", "Bandar Lampung", "Jakarta")
+    $locality = $lokasi_city ?: ( $lokasi ?: 'Indonesia' );
+
+    // 2. streetAddress: Alamat jalan detail jika ada, atau fallback ke nama daerah
+    $street = $lokasi_det ?: $locality;
+
+    // 3. addressRegion: Provinsi / Wilayah
+    if ( ! $provinsi ) {
+        $provinsi = hakajobspro_detect_region_by_city( $locality );
+    }
+
+    // 4. postalCode: Kode pos 5 digit
+    if ( ! $kodepos ) {
+        $kodepos = hakajobspro_detect_postal_code_by_city( $locality );
+    }
+
+    $schema_address = [
+        '@type'           => 'PostalAddress',
+        'streetAddress'   => $street,
+        'addressLocality' => $locality,
+        'addressRegion'   => $provinsi,
+        'postalCode'      => $kodepos,
+        'addressCountry'  => 'ID',
+    ];
 
     // Petakan tipe pekerjaan ke enum resmi Google JobPosting
     $emp_map = [
@@ -610,11 +730,7 @@ function hakajobspro_output_jobposting_schema() {
         'hiringOrganization' => $org_data,
         'jobLocation'        => [
             '@type'   => 'Place',
-            'address' => [
-                '@type'           => 'PostalAddress',
-                'addressLocality' => $lokasi ?: 'Indonesia',
-                'addressCountry'  => 'ID',
-            ],
+            'address' => $schema_address,
         ],
     ];
 
