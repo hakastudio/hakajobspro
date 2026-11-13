@@ -227,6 +227,9 @@ function hakajobspro_customizer_css() {
     @media screen and (max-width: 782px) {
         body.admin-bar .site-header-sticky-wrap { top: 46px !important; }
     }
+    @media screen and (max-width: 600px) {
+        body.admin-bar .site-header-sticky-wrap { top: 0 !important; }
+    }
     .main-nav { background: <?php echo esc_attr( $nav_bg ); ?>; }
     .nav-menu > li > a { color: <?php echo esc_attr( $nav_text ); ?>; }
     .nav-menu > li > a:hover,

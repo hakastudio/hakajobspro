@@ -18,12 +18,34 @@
         if (e.key === 'Escape') navMenu?.classList.remove('open');
     });
 
-    // Sticky Header Scroll State
+    // Sticky Header Scroll State & Dynamic Admin Bar Offset on Mobile
     const stickyWrap = document.querySelector('.site-header-sticky-wrap');
     if (stickyWrap) {
+        const updateStickyPosition = () => {
+            const hasAdminBar = document.body.classList.contains('admin-bar');
+            const isMobile = window.innerWidth <= 600;
+
+            if (hasAdminBar && isMobile) {
+                // Pada layar mobile (<= 600px), baris admin WP (#wpadminbar) berposisi absolute (ikut ter-scroll).
+                // Saat posisi di paling atas, beri jarak 46px agar tidak tertumpuk admin bar.
+                // Begitu di-scroll ke bawah, header menempel rapat di atas layar (top: 0px).
+                const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+                const topOffset = Math.max(0, 46 - scrollY);
+                stickyWrap.style.top = topOffset + 'px';
+            } else if (hasAdminBar) {
+                stickyWrap.style.top = window.innerWidth <= 782 ? '46px' : '32px';
+            } else {
+                stickyWrap.style.top = '0px';
+            }
+        };
+
         window.addEventListener('scroll', () => {
             stickyWrap.classList.toggle('is-scrolled', window.scrollY > 20);
+            updateStickyPosition();
         }, { passive: true });
+
+        window.addEventListener('resize', updateStickyPosition, { passive: true });
+        updateStickyPosition();
     }
 
     // Scroll to top
