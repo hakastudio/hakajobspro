@@ -60,13 +60,7 @@ function hakajobspro_get_default_footer_col3_text() {
 }
 
 function hakajobspro_get_default_footer_bottom_text() {
-    $home = home_url( '/' );
-    return implode( "\n", [
-        'Tentang Kami | ' . $home,
-        'Kebijakan Privasi | ' . $home,
-        'Disclaimer | ' . $home,
-        'Kontak | ' . $home,
-    ] );
+    return '';
 }
 
 /**
@@ -228,7 +222,17 @@ function hakajobspro_render_footer_column_links( $col_num ) {
  * Dapatkan HTML Menu Baris Bawah Footer (sebelah Copyright)
  */
 function hakajobspro_get_footer_bottom_links_html() {
+    // 1. Jika saklar tampilkan link baris bawah dimatikan, selalu kembalikan string kosong
+    if ( ! get_theme_mod( 'hakajobspro_footer_show_bottom_links', false ) ) {
+        return '';
+    }
+
     $raw = trim( (string) get_theme_mod( 'hakajobspro_footer_bottom_links', '' ) );
+
+    // 2. Jika user sengaja mengosongkan blok teks dan tidak ada WP Menu lokasi footer, jangan cetak apapun
+    if ( '' === $raw && ! has_nav_menu( 'footer' ) ) {
+        return '';
+    }
 
     if ( '' !== $raw ) {
         $items = hakajobspro_parse_menu_lines( $raw );
@@ -252,16 +256,6 @@ function hakajobspro_get_footer_bottom_links_html() {
             'fallback_cb'    => false,
             'echo'           => false,
         ] );
-    }
-
-    $default_text = hakajobspro_get_default_footer_bottom_text();
-    if ( ! empty( $default_text ) ) {
-        $items = hakajobspro_parse_menu_lines( $default_text );
-        $links = [];
-        foreach ( $items as $item ) {
-            $links[] = '<a href="' . esc_url( $item['url'] ) . '">' . esc_html( $item['label'] ) . '</a>';
-        }
-        return implode( ' &nbsp;&bull;&nbsp; ', $links );
     }
 
     return '';
