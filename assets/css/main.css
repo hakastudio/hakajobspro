@@ -1245,9 +1245,14 @@ article.single-loker {
     color: #93c5fd;
 }
 
+/* Pembungkus Saluran WA di Single Loker */
+.single-loker__wa-wrap {
+    padding: 0 28px 24px;
+}
+
 /* Box Ajakan Gabung Saluran WhatsApp di Akhir Artikel */
 .wa-channel-cta {
-    margin-top: 24px;
+    margin-top: 20px;
     padding: 18px 20px;
     border-radius: 10px;
     border: 1px solid #bbf7d0;
@@ -1875,6 +1880,7 @@ body.hakajobspro-anticopas select {
     .single-loker__body { padding: 16px; }
     .single-loker__apply { padding: 16px; flex-direction: column; align-items: stretch; }
     .single-loker__apply .btn { width: 100%; }
+    .single-loker__wa-wrap { padding: 0 16px 20px; }
     .admin-wa-bar { flex-direction: column; align-items: stretch; padding: 14px; }
     .admin-wa-bar__left { flex-direction: column; align-items: flex-start; gap: 8px; }
     .admin-wa-bar__actions { width: 100%; }

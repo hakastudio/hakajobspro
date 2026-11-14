@@ -175,14 +175,9 @@ while ( have_posts() ) : the_post();
       <h2><?php esc_html_e( 'Cara Melamar', 'hakajobspro' ); ?></h2>
       <p><?php echo nl2br( esc_html( $cara ) ); ?></p>
       <?php endif; ?>
-
-      <!-- AJAKAN GABUNG SALURAN WHATSAPP DI AKHIR ARTIKEL -->
-      <?php hakajobspro_render_wa_channel_cta(); ?>
     </div>
 
-    <?php if ( function_exists( 'hakajobspro_render_ad_slot' ) ) hakajobspro_render_ad_slot( 'single_bottom' ); ?>
-
-    <!-- TOMBOL LAMAR -->
+    <!-- TOMBOL LAMAR (BERADA DI ATAS GABUNG SALURAN WA) -->
     <?php if ( ! $expired && $link_lamar ) : ?>
     <div class="single-loker__apply">
       <div>
@@ -223,6 +218,13 @@ while ( have_posts() ) : the_post();
       <?php endif; ?>
     </div>
     <?php endif; ?>
+
+    <!-- AJAKAN GABUNG SALURAN WHATSAPP (BERADA DI BAWAH TOMBOL LAMAR) -->
+    <div class="single-loker__wa-wrap">
+      <?php hakajobspro_render_wa_channel_cta(); ?>
+    </div>
+
+    <?php if ( function_exists( 'hakajobspro_render_ad_slot' ) ) hakajobspro_render_ad_slot( 'single_bottom' ); ?>
 
   </article>
 
